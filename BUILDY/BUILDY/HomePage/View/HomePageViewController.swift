@@ -109,6 +109,7 @@ class HomePageViewController: UIViewController {
             }
         }
     }
+
 }
 
 // MARK: - UICollectionViewDataSource & UICollectionViewDelegateFlowLayout

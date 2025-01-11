@@ -27,7 +27,9 @@ class HomePageViewModel {
     func fetchProducts() {
         if !ProductCache.shared.isCacheEmpty {
             print("Using cached products.")
-            self.onProductsFetched?()
+            DispatchQueue.main.async {
+                self.onProductsFetched?()
+            }
             return
         }
 
