@@ -1,81 +1,84 @@
 //
-//  ProductCell.swift
-//  FinalProjectDemo
+//  ShopProductCell.swift
+//  BUILDY
 //
-//  Created by Nino Kurshavishvili on 06.01.25.
+//  Created by Nino Kurshavishvili on 11.01.25.
 //
-//
-//
+
 import UIKit
 
-class ProductCell: UICollectionViewCell {
+class ShopProductCell: UICollectionViewCell {
     
-    static let reuseIdentifier = "ProductCell"
+    static let identifier = "ShopProductCell"
     
-    let nameLabel: UILabel = {
+    private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    let priceLabel: UILabel = {
+    private let priceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    let supplierLabel: UILabel = {
+    private let supplierLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .gray
-        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    let productImageView: UIImageView = {
+    private let productImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8 
+        imageView.layer.cornerRadius = 8
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         contentView.addSubview(productImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(priceLabel)
         contentView.addSubview(supplierLabel)
         
         NSLayoutConstraint.activate([
-            productImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            productImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            productImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            productImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             productImageView.heightAnchor.constraint(equalToConstant: 150),
 
             nameLabel.topAnchor.constraint(equalTo: productImageView.bottomAnchor, constant: 8),
-            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
             priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
-            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
             supplierLabel.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 4),
-            supplierLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            supplierLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            supplierLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            supplierLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            supplierLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            supplierLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(with product: Product) {
+        nameLabel.text = product.name
+        priceLabel.text = "$\(product.price)"
+        supplierLabel.text = product.supplier
+        productImageView.image = product.imageURL
     }
 }

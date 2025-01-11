@@ -69,6 +69,6 @@ class ProductCategoryCell: UICollectionViewCell {
     func configure(with product: Product) {
         productNameLabel.text = product.name
         productPriceLabel.text = "\(product.price) \(product.unit)"
-        productImageView.image = product.imageURL // Placeholder if `imageURL` is nil
+        productImageView.image = product.imageURL 
     }
 }

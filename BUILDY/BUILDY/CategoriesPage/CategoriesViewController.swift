@@ -81,15 +81,11 @@ extension CategoriesViewController: UICollectionViewDataSource, UICollectionView
         let category = categories[indexPath.item]
         print("Selected category: \(category.name)")
 
-        // Fetch filtered products using the category name
         let filteredProducts = HomePageViewModel().products(for: category.name)
         print("Filtered products count: \(filteredProducts.count)")
 
-        // Instantiate ProductCategoryViewController and pass filtered products
         let productCategoryVC = ProductCategoryViewController()
         productCategoryVC.configure(with: filteredProducts)
         navigationController?.pushViewController(productCategoryVC, animated: true)
     }
-
-
 }
