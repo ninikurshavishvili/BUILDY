@@ -25,19 +25,24 @@ extension HomePageViewModel {
 
         return filteredProducts
     }
-    
-    func products(for supplier: String, from allProducts: [Product]) -> [Product] {
+}
+
+extension HomePageViewModel {
+    func filteredBySupplier(for supplier: String, from allProducts: [Product]) -> [Product] {
         let normalizedSupplier = supplier.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         let filteredProducts = allProducts.filter {
             $0.supplier.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalizedSupplier
         }
-        print("✅✅✅✅")
+
+        print("🟢🟢🟢 Filtering products for supplier: \(supplier)")
+        print("Total products available: \(allProducts.count)")
+        print("Normalized supplier: \(normalizedSupplier)")
+        print("Filtered products count: \(filteredProducts.count)")
         
-        print("Filtered \(filteredProducts.count) products for supplier \(supplier)")
+        for product in filteredProducts {
+            print("Filtered Product - Name: \(product.name), Supplier: \(product.supplier)")
+        }
+
         return filteredProducts
     }
-
-    
 }
-
-

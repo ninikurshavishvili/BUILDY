@@ -12,7 +12,7 @@ struct Product {
     let price: String
     let unit: String
     let featuresGeo: String
-    let category: String // Added Category field
+    let category: String 
     let link: String?
     var imageURL: UIImage?
     let supplier: String

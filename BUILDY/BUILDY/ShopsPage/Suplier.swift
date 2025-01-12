@@ -10,5 +10,4 @@ import Foundation
 struct Suplier {
     let name: String
     let imageURL: String?
-    let products: [Product]
 }

@@ -71,8 +71,8 @@ class SuplierContainerCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with manufacturer: Suplier) {
-        if let logoURL = manufacturer.imageURL, let url = URL(string: logoURL) {
+    func configure(with supplier: Suplier, products: [Product]) {
+        if let logoURL = supplier.imageURL, let url = URL(string: logoURL) {
             URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
                 guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else { return }
                 DispatchQueue.main.async {
@@ -82,10 +82,9 @@ class SuplierContainerCell: UICollectionViewCell {
         } else {
             logoImageView.image = UIImage(systemName: "photo")
         }
+        nameLabel.text = supplier.name
 
-        nameLabel.text = manufacturer.name
-
-        products = manufacturer.products
+        self.products = products
         productCollectionView.reloadData()
     }
 }

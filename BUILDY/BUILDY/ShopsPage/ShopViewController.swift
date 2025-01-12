@@ -59,9 +59,16 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SuplierContainerCell.identifier, for: indexPath) as? SuplierContainerCell else {
             return UICollectionViewCell()
         }
-        
         let manufacturer = manufacturers[indexPath.item]
-        cell.configure(with: manufacturer)
+        
+        let viewModel = HomePageViewModel()
+        let allProducts = viewModel.products
+        
+        let supplierName = manufacturer.name
+        let filteredProducts = viewModel.filteredBySupplier(for: supplierName, from: allProducts)
+        
+        cell.configure(with: manufacturer, products: filteredProducts)
+        
         return cell
     }
 }
