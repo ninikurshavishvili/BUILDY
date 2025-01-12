@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProductCategoryViewController: UIViewController {
+class CategoryDetailViewController: UIViewController {
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -57,7 +57,7 @@ class ProductCategoryViewController: UIViewController {
 
 }
 
-extension ProductCategoryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension CategoryDetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return products.count
     }

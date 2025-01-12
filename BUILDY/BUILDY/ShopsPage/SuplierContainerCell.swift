@@ -10,6 +10,7 @@ import UIKit
 class SuplierContainerCell: UICollectionViewCell {
     static let identifier = "SuplierContainerCell"
 
+
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -39,6 +40,7 @@ class SuplierContainerCell: UICollectionViewCell {
     }()
 
     private var products: [Product] = []
+    private var supplier: Suplier?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,6 +52,9 @@ class SuplierContainerCell: UICollectionViewCell {
         productCollectionView.dataSource = self
         productCollectionView.delegate = self
 
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.addGestureRecognizer(tapGesture)
+        
         NSLayoutConstraint.activate([
             logoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             logoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
@@ -71,7 +76,14 @@ class SuplierContainerCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    @objc private func handleTap() {
+        guard let supplier = supplier else { return }
+        navigateToShopDetails(for: supplier)
+    }
+
     func configure(with supplier: Suplier, products: [Product]) {
+        self.supplier = supplier
+        
         if let logoURL = supplier.imageURL, let url = URL(string: logoURL) {
             URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
                 guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else { return }
@@ -86,6 +98,27 @@ class SuplierContainerCell: UICollectionViewCell {
 
         self.products = products
         productCollectionView.reloadData()
+    }
+
+    private func navigateToShopDetails(for supplier: Suplier) {
+        if let viewController = self.viewController() {
+            let shopDetailsVC = ShopDetailsViewController()
+            shopDetailsVC.supplier = supplier
+            viewController.navigationController?.pushViewController(shopDetailsVC, animated: true)
+        }
+    }
+}
+
+extension UIView {
+    func viewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while responder != nil {
+            if let viewController = responder as? UIViewController {
+                return viewController
+            }
+            responder = responder?.next
+        }
+        return nil
     }
 }
 
@@ -103,6 +136,7 @@ extension SuplierContainerCell: UICollectionViewDataSource, UICollectionViewDele
         return cell
     }
 }
+
 
 
 

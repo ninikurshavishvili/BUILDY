@@ -77,7 +77,7 @@ class ShopProductCell: UICollectionViewCell {
 
     func configure(with product: Product) {
         nameLabel.text = product.name
-        priceLabel.text = "$\(product.price)"
+        priceLabel.text = "\(product.price)"
         supplierLabel.text = product.supplier
         productImageView.image = product.imageURL
     }
