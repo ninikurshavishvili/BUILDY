@@ -7,25 +7,14 @@
 
 import UIKit
 
-class SuplierContainerCell: UICollectionViewCell {
+class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+    
     static let identifier = "SuplierContainerCell"
 
-
-    private let logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 16)
-        label.numberOfLines = 1
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let suplierCellView: SuplierCellView = {
+        let view = SuplierCellView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     private let productCollectionView: UICollectionView = {
@@ -44,8 +33,7 @@ class SuplierContainerCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(logoImageView)
-        contentView.addSubview(nameLabel)
+        contentView.addSubview(suplierCellView)
         contentView.addSubview(productCollectionView)
 
         productCollectionView.register(ShopProductCell.self, forCellWithReuseIdentifier: ShopProductCell.identifier)
@@ -53,19 +41,15 @@ class SuplierContainerCell: UICollectionViewCell {
         productCollectionView.delegate = self
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        self.addGestureRecognizer(tapGesture)
+        suplierCellView.addGestureRecognizer(tapGesture)
         
         NSLayoutConstraint.activate([
-            logoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            logoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            logoImageView.widthAnchor.constraint(equalToConstant: 50),
-            logoImageView.heightAnchor.constraint(equalToConstant: 50),
+            suplierCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            suplierCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            suplierCellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            suplierCellView.heightAnchor.constraint(equalToConstant: 66),
 
-            nameLabel.centerYAnchor.constraint(equalTo: logoImageView.centerYAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: logoImageView.trailingAnchor, constant: 8),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-
-            productCollectionView.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 16),
+            productCollectionView.topAnchor.constraint(equalTo: suplierCellView.bottomAnchor, constant: 16),
             productCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             productCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             productCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
@@ -83,19 +67,7 @@ class SuplierContainerCell: UICollectionViewCell {
 
     func configure(with supplier: Suplier, products: [Product]) {
         self.supplier = supplier
-        
-        if let logoURL = supplier.imageURL, let url = URL(string: logoURL) {
-            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-                guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else { return }
-                DispatchQueue.main.async {
-                    self.logoImageView.image = image
-                }
-            }.resume()
-        } else {
-            logoImageView.image = UIImage(systemName: "photo")
-        }
-        nameLabel.text = supplier.name
-
+        suplierCellView.configure(with: supplier)
         self.products = products
         productCollectionView.reloadData()
     }
@@ -109,20 +81,7 @@ class SuplierContainerCell: UICollectionViewCell {
     }
 }
 
-extension UIView {
-    func viewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while responder != nil {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            responder = responder?.next
-        }
-        return nil
-    }
-}
-
-extension SuplierContainerCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension SuplierContainerCell {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return products.count
     }
@@ -135,10 +94,8 @@ extension SuplierContainerCell: UICollectionViewDataSource, UICollectionViewDele
         cell.configure(with: product)
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 150, height: 200)
+    }
 }
-
-
-
-
-
-
