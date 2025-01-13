@@ -28,46 +28,17 @@ class HomePageViewController: UIViewController {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
-    
-    private let categoriesHeaderView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+
+    private let categoriesContainerCell: CategoriesContainerCell = {
+        let cell = CategoriesContainerCell()
+        cell.translatesAutoresizingMaskIntoConstraints = false
+        return cell
     }()
 
-    private let categoriesTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Categories"
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let seeAllButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("See All", for: .normal)
-        button.setTitleColor(.systemOrange, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(seeAllTapped), for: .touchUpInside)
-        return button
-    }()
-    
-    private let categoriesCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.showsHorizontalScrollIndicator = false
-        return collectionView
-    }()
-
-    private let productCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        return collectionView
+    private let productsContainerCell: ProductsContainerCell = {
+        let cell = ProductsContainerCell()
+        cell.translatesAutoresizingMaskIntoConstraints = false
+        return cell
     }()
 
     private let productCarouselCell: ProductCarouselCell = {
@@ -91,25 +62,21 @@ class HomePageViewController: UIViewController {
         scrollView.addSubview(contentView)
 
         contentView.addSubview(searchBar)
-        contentView.addSubview(categoriesHeaderView)
-        categoriesHeaderView.addSubview(categoriesTitleLabel)
-        categoriesHeaderView.addSubview(seeAllButton)
-        contentView.addSubview(categoriesCollectionView)
-        contentView.addSubview(productCollectionView)
+        contentView.addSubview(categoriesContainerCell)
+        contentView.addSubview(productsContainerCell)
         contentView.addSubview(productCarouselCell)
 
-        categoriesCollectionView.delegate = self
-        categoriesCollectionView.dataSource = self
-        categoriesCollectionView.backgroundColor = .white
-        categoriesCollectionView.register(CategoriesCell.self, forCellWithReuseIdentifier: CategoriesCell.identifier)
-
-        productCollectionView.delegate = self
-        productCollectionView.dataSource = self
-        productCollectionView.backgroundColor = .white
-        productCollectionView.register(ProductCell.self, forCellWithReuseIdentifier: "ProductCell")
+        categoriesContainerCell.configure(delegate: self, dataSource: self) { [weak self] in
+            guard let self = self else { return }
+            let categoriesVC = CategoriesViewController()
+            self.navigationController?.pushViewController(categoriesVC, animated: true)
+        }
+        productsContainerCell.configure(delegate: self, dataSource: self)
 
         setupConstraints()
     }
+    
+    
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -128,28 +95,17 @@ class HomePageViewController: UIViewController {
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
-            categoriesHeaderView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
-            categoriesHeaderView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            categoriesHeaderView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            categoriesHeaderView.heightAnchor.constraint(equalToConstant: 30),
+            categoriesContainerCell.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
+            categoriesContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            categoriesContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            categoriesContainerCell.heightAnchor.constraint(equalToConstant: 160),
 
-            categoriesTitleLabel.leadingAnchor.constraint(equalTo: categoriesHeaderView.leadingAnchor),
-            categoriesTitleLabel.centerYAnchor.constraint(equalTo: categoriesHeaderView.centerYAnchor),
+            productsContainerCell.topAnchor.constraint(equalTo: categoriesContainerCell.bottomAnchor, constant: 16),
+            productsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            productsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            productsContainerCell.heightAnchor.constraint(equalToConstant: 250),
 
-            seeAllButton.trailingAnchor.constraint(equalTo: categoriesHeaderView.trailingAnchor),
-            seeAllButton.centerYAnchor.constraint(equalTo: categoriesHeaderView.centerYAnchor),
-
-            categoriesCollectionView.topAnchor.constraint(equalTo: categoriesHeaderView.bottomAnchor, constant: 8),
-            categoriesCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            categoriesCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            categoriesCollectionView.heightAnchor.constraint(equalToConstant: 120),
-
-            productCollectionView.topAnchor.constraint(equalTo: categoriesCollectionView.bottomAnchor, constant: 16),
-            productCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            productCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            productCollectionView.heightAnchor.constraint(equalToConstant: 250),
-
-            productCarouselCell.topAnchor.constraint(equalTo: productCollectionView.bottomAnchor, constant: 16),
+            productCarouselCell.topAnchor.constraint(equalTo: productsContainerCell.bottomAnchor, constant: 16),
             productCarouselCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             productCarouselCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             productCarouselCell.heightAnchor.constraint(equalToConstant: 300),
@@ -158,24 +114,18 @@ class HomePageViewController: UIViewController {
         ])
     }
 
-    
-    @objc private func seeAllTapped() {
-        let categoriesVC = CategoriesViewController()
-        navigationController?.pushViewController(categoriesVC, animated: true)
-    }
-
     private func fetchData() {
         categoriesViewModel.fetchCategories()
         categoriesViewModel.onCategoriesFetched = { [weak self] in
             DispatchQueue.main.async {
-                self?.categoriesCollectionView.reloadData()
+                self?.categoriesContainerCell.categoriesCollectionView.reloadData()
             }
         }
 
         viewModel.fetchProducts()
         viewModel.onProductsFetched = { [weak self] in
             DispatchQueue.main.async {
-                self?.productCollectionView.reloadData()
+                self?.productsContainerCell.productsCollectionView.reloadData()
                 self?.productCarouselCell.configure(with: self?.viewModel.products ?? [])
             }
         }
@@ -187,16 +137,16 @@ class HomePageViewController: UIViewController {
 extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == categoriesCollectionView {
+        if collectionView == categoriesContainerCell.categoriesCollectionView {
             return categoriesViewModel.categories.count
-        } else if collectionView == productCollectionView {
+        } else if collectionView == productsContainerCell.productsCollectionView {
             return viewModel.products.count
         }
         return 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == categoriesCollectionView {
+        if collectionView == categoriesContainerCell.categoriesCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoriesCell.identifier, for: indexPath) as! CategoriesCell
             let category = categoriesViewModel.categories[indexPath.item]
             cell.configure(with: category)
@@ -217,32 +167,22 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == categoriesCollectionView {
+        if collectionView == categoriesContainerCell.categoriesCollectionView {
             return CGSize(width: 100, height: 120)
-        } else if collectionView == productCollectionView {
+        } else if collectionView == productsContainerCell.productsCollectionView {
             return CGSize(width: 200, height: 250)
         }
         return .zero
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
-    }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == categoriesCollectionView {
+        if collectionView == categoriesContainerCell.categoriesCollectionView {
             let selectedCategory = categoriesViewModel.categories[indexPath.item]
-            print("Selected category from HOMEPGE 🚀🚀: \(selectedCategory.name)")
-
             let filteredProducts = viewModel.products(for: selectedCategory.name)
-            print("Filtered products count: \(filteredProducts.count)")
-
             let categoryDetailVC = CategoryDetailViewController()
             categoryDetailVC.configure(with: filteredProducts)
             navigationController?.pushViewController(categoryDetailVC, animated: true)
         }
     }
-    
-
 }
 
