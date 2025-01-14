@@ -63,8 +63,7 @@ class SignUpViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)  
         button.layer.cornerRadius = 5  
         button.translatesAutoresizingMaskIntoConstraints = false  
-        button.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)  
-        return button  
+        return button
     }()  
     
     let cancelButton: UIButton = {  
@@ -72,8 +71,7 @@ class SignUpViewController: UIViewController {
         button.setTitle("Cancel", for: .normal)  
         button.setTitleColor(.red, for: .normal)  
         button.translatesAutoresizingMaskIntoConstraints = false  
-        button.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)  
-        return button  
+        return button
     }()  
     
     override func viewDidLoad() {  
@@ -88,9 +86,12 @@ class SignUpViewController: UIViewController {
         view.addSubview(passwordTextField)  
         view.addSubview(confirmPasswordTextField)  
         view.addSubview(signUpButton)  
-        view.addSubview(cancelButton)  
+        view.addSubview(cancelButton)
         
-        NSLayoutConstraint.activate([  
+        signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
             fullNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),  
             fullNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),  
             fullNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),  
@@ -121,31 +122,46 @@ class SignUpViewController: UIViewController {
         ])  
     }  
     
-    @objc private func signUpTapped() {  
-        guard let fullName = fullNameTextField.text, !fullName.isEmpty,  
-              let email = emailTextField.text, !email.isEmpty,  
-              let password = passwordTextField.text, !password.isEmpty,  
-              let confirmPassword = confirmPasswordTextField.text, !confirmPassword.isEmpty else {  
-            print("Missing field data")  
-            return  
-        }  
+    @objc private func signUpTapped() {
+            guard let fullName = fullNameTextField.text, !fullName.isEmpty,
+                  let email = emailTextField.text, !email.isEmpty,
+                  let password = passwordTextField.text, !password.isEmpty,
+                  let confirmPassword = confirmPasswordTextField.text, !confirmPassword.isEmpty else {
+                showAlert(message: "Please fill in all fields.")
+                return
+            }
 
-        if password != confirmPassword {  
-            print("Passwords do not match")  
-            return  
-        }  
-        
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in  
-            if let error = error {  
-                print("Account creation failed: \(error.localizedDescription)")  
-                return  
-            }  
-            print("Account created successfully")  
-            self?.dismiss(animated: true, completion: nil)  
-        }  
-    }  
-    
-    @objc private func cancelTapped() {  
-        dismiss(animated: true, completion: nil)  
-    }  
-}
+            if password != confirmPassword {
+                showAlert(message: "Passwords do not match.")
+                return
+            }
+
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+                if let error = error {
+                    print("Account creation failed: \(error.localizedDescription)")
+                    self?.showAlert(message: "Account creation failed. Please try again.")
+                    return
+                }
+                print("Account created successfully")
+                
+                self?.navigateToSignIn()
+            }
+        }
+
+        @objc private func cancelTapped() {
+            dismiss(animated: true, completion: nil)
+        }
+
+    private func showAlert(message: String) {
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
+
+    private func navigateToSignIn() {
+        if let navigationController = self.navigationController {
+            let signInViewController = SignInViewController()
+            navigationController.pushViewController(signInViewController, animated: true)
+        }
+    }
+    }

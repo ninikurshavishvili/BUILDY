@@ -19,8 +19,7 @@ struct ProductDetailsView: View {
                     .frame(maxHeight: 300)
                     .cornerRadius(8)
                     .padding()
-
-
+                    
                 Text(product.name)
                     .font(.title)
                     .fontWeight(.bold)
@@ -45,10 +44,38 @@ struct ProductDetailsView: View {
                     .padding(.horizontal)
 
                 Spacer()
+
+                HStack(spacing: 16) {
+                    Button(action: {
+                        print("Added \(product.name) to cart.")
+                    }) {
+                        Text("კალათაში დამატება")
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+
+                    Button(action: {
+                        print("Buying \(product.name) now.")
+                    }) {
+                        Text("ყიდვა")
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.orange)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                }
+                .padding(.horizontal)
             }
         }
         .navigationTitle(product.name)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
