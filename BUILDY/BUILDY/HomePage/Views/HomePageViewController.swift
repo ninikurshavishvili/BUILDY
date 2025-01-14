@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HomePageViewController: UIViewController {
     
@@ -49,14 +50,28 @@ class HomePageViewController: UIViewController {
 
     private var categoriesViewModel = CategoriesViewModel()
     private var viewModel = HomePageViewModel()
-
+    
+    
+    //MARK: I should fix it to be optional values🥁🥁
+    private var productNavigationHandler: NavigationHandler!
+    private var categoryNavigationHandler: NavigationHandler!
+    private var dataFetcher: DataFetcher!
+    
+    private var categoriesDataSource: CategoriesDataSource!
+    private var productsDataSource: ProductsDataSource!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupDataSources()
         fetchData()
+        
+        productNavigationHandler = ProductNavigationHandler(viewModel: viewModel)
+        categoryNavigationHandler = CategoryNavigationHandler(categoriesViewModel: categoriesViewModel, viewModel: viewModel)
     }
-
+    
     private func setupUI() {
+    
         view.backgroundColor = .white
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -66,16 +81,22 @@ class HomePageViewController: UIViewController {
         contentView.addSubview(productsContainerCell)
         contentView.addSubview(productCarouselCell)
 
-        categoriesContainerCell.configure(delegate: self, dataSource: self) { [weak self] in
+        setupConstraints()
+
+    }
+    
+    private func setupDataSources() {
+        categoriesDataSource = CategoriesDataSource(viewModel: categoriesViewModel)
+        productsDataSource = ProductsDataSource(viewModel: viewModel)
+
+        categoriesContainerCell.configure(delegate: self, dataSource: categoriesDataSource) { [weak self] in
             guard let self = self else { return }
             let categoriesVC = CategoriesViewController()
             self.navigationController?.pushViewController(categoriesVC, animated: true)
         }
-        productsContainerCell.configure(delegate: self, dataSource: self)
-
-        setupConstraints()
+        
+        productsContainerCell.configure(delegate: self, dataSource: productsDataSource)
     }
-    
     
 
     private func setupConstraints() {
@@ -131,8 +152,18 @@ class HomePageViewController: UIViewController {
         }
     }
 }
+extension HomePageViewController: UICollectionViewDelegate {
 
-// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == productsContainerCell.productsCollectionView {
+            productNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
+        } else if collectionView == categoriesContainerCell.categoriesCollectionView {
+            categoryNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
+        }
+    }
+}
+
+// MARK: - UICollectionViewDataSource & UICollectionViewDelegateFlowLayout
 
 extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
@@ -147,22 +178,9 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == categoriesContainerCell.categoriesCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoriesCell.identifier, for: indexPath) as! CategoriesCell
-            let category = categoriesViewModel.categories[indexPath.item]
-            cell.configure(with: category)
-            return cell
+            return categoriesDataSource.collectionView(collectionView, cellForItemAt: indexPath)
         } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.reuseIdentifier, for: indexPath) as! ProductCell
-            let product = viewModel.products[indexPath.item]
-            cell.nameLabel.text = product.name
-            cell.priceLabel.text = "\(product.price)"
-            cell.supplierLabel.text = "Supplier: \(product.supplier)"
-            if let imageURL = product.imageURL {
-                cell.productImageView.image = imageURL
-            } else {
-                cell.productImageView.image = UIImage(named: "placeholder")
-            }
-            return cell
+            return productsDataSource.collectionView(collectionView, cellForItemAt: indexPath)
         }
     }
 
@@ -174,15 +192,60 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
         }
         return .zero
     }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == categoriesContainerCell.categoriesCollectionView {
-            let selectedCategory = categoriesViewModel.categories[indexPath.item]
-            let filteredProducts = viewModel.products(for: selectedCategory.name)
-            let categoryDetailVC = CategoryDetailViewController()
-            categoryDetailVC.configure(with: filteredProducts)
-            navigationController?.pushViewController(categoryDetailVC, animated: true)
-        }
-    }
 }
+
+
+//MARK: - saving Delegate and datasource extensions just in case
+
+// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+//
+//extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+//
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        if collectionView == categoriesContainerCell.categoriesCollectionView {
+//            return categoriesViewModel.categories.count
+//        } else if collectionView == productsContainerCell.productsCollectionView {
+//            return viewModel.products.count
+//        }
+//        return 0
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        if collectionView == categoriesContainerCell.categoriesCollectionView {
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoriesCell.identifier, for: indexPath) as! CategoriesCell
+//            let category = categoriesViewModel.categories[indexPath.item]
+//            cell.configure(with: category)
+//            return cell
+//        } else {
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.reuseIdentifier, for: indexPath) as! ProductCell
+//            let product = viewModel.products[indexPath.item]
+//            cell.nameLabel.text = product.name
+//            cell.priceLabel.text = "\(product.price)"
+//            cell.supplierLabel.text = "Supplier: \(product.supplier)"
+//            if let imageURL = product.imageURL {
+//                cell.productImageView.image = imageURL
+//            } else {
+//                cell.productImageView.image = UIImage(named: "placeholder")
+//            }
+//            return cell
+//        }
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        if collectionView == categoriesContainerCell.categoriesCollectionView {
+//            return CGSize(width: 100, height: 120)
+//        } else if collectionView == productsContainerCell.productsCollectionView {
+//            return CGSize(width: 200, height: 250)
+//        }
+//        return .zero
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        if collectionView == productsContainerCell.productsCollectionView {
+//            productNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
+//        } else if collectionView == categoriesContainerCell.categoriesCollectionView {
+//            categoryNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
+//        }
+//    } 
+//}
 
