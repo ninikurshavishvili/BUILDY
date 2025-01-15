@@ -13,6 +13,7 @@ class CategoriesViewController: UIViewController {
     private var viewModel = CategoriesViewModel()
     private var categories: [Category] = []
     
+    
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2 - 24, height: 140)
@@ -84,7 +85,7 @@ extension CategoriesViewController: UICollectionViewDataSource, UICollectionView
         let filteredProducts = HomePageViewModel().products(for: category.name)
         print("Filtered products count: \(filteredProducts.count)")
 
-        let productCategoryVC = CategoryDetailViewController()
+        let productCategoryVC = CategoryDetailViewController(navigationHandler: CategoryDetailNavigationHandler())
         productCategoryVC.configure(with: filteredProducts)
         navigationController?.pushViewController(productCategoryVC, animated: true)
     }

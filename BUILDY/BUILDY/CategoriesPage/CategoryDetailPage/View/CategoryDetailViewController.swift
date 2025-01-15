@@ -23,6 +23,16 @@ class CategoryDetailViewController: UIViewController {
     }()
     
     private var products: [Product] = []
+    private let navigationHandler: CategoryDetailNavigation
+    
+    init(navigationHandler: CategoryDetailNavigation) {
+        self.navigationHandler = navigationHandler
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,13 +58,8 @@ class CategoryDetailViewController: UIViewController {
     
     func configure(with products: [Product]) {
         self.products = products
-        print("Configured with \(products.count) products")
-        for product in products {
-            print("Product - Name: \(product.name), Category: \(product.category)")
-        }
         collectionView.reloadData()
     }
-
 }
 
 extension CategoryDetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -67,9 +72,14 @@ extension CategoryDetailViewController: UICollectionViewDataSource, UICollection
             return UICollectionViewCell()
         }
         let product = products[indexPath.row]
-        print("Displaying product: \(product.name)")
         cell.configure(with: product)
         return cell
     }
-
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedProduct = products[indexPath.row]
+        navigationHandler.navigateToProductDetails(from: self, with: selectedProduct)
+    }
 }
+
+

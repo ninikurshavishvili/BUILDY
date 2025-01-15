@@ -41,7 +41,7 @@ class CategoryNavigationHandler: NavigationHandler {
     func handleNavigation(for collectionView: UICollectionView, indexPath: IndexPath, navigationController: UINavigationController?) {
         let selectedCategory = categoriesViewModel.categories[indexPath.item]
         let filteredProducts = viewModel.products(for: selectedCategory.name)
-        let categoryDetailVC = CategoryDetailViewController()
+        let categoryDetailVC = CategoryDetailViewController(navigationHandler: CategoryDetailNavigationHandler())
         categoryDetailVC.configure(with: filteredProducts)
         navigationController?.pushViewController(categoryDetailVC, animated: true)
     }
