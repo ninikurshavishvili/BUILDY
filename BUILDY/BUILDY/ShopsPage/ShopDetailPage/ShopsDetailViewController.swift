@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -105,5 +106,15 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         let product = filteredProducts[indexPath.item]
         cell.configure(with: product)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedProduct = filteredProducts[indexPath.item]
+
+        let productDetailsView = ProductDetailsView(product: selectedProduct)
+        
+        let hostingController = UIHostingController(rootView: productDetailsView)
+
+        navigationController?.pushViewController(hostingController, animated: true)
     }
 }
