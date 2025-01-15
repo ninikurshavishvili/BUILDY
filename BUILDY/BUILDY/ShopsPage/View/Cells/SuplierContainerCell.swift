@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -40,7 +41,7 @@ class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICo
         productCollectionView.dataSource = self
         productCollectionView.delegate = self
 
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSupplierTap))
         suplierCellView.addGestureRecognizer(tapGesture)
         
         NSLayoutConstraint.activate([
@@ -60,16 +61,16 @@ class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICo
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc private func handleTap() {
-        guard let supplier = supplier else { return }
-        navigateToShopDetails(for: supplier)
-    }
-
     func configure(with supplier: Suplier, products: [Product]) {
         self.supplier = supplier
         suplierCellView.configure(with: supplier)
         self.products = products
         productCollectionView.reloadData()
+    }
+
+    @objc private func handleSupplierTap() {
+        guard let supplier = supplier else { return }
+        navigateToShopDetails(for: supplier)
     }
 
     private func navigateToShopDetails(for supplier: Suplier) {
@@ -79,9 +80,18 @@ class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICo
             viewController.navigationController?.pushViewController(shopDetailsVC, animated: true)
         }
     }
-}
 
-extension SuplierContainerCell {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let product = products[indexPath.item]
+
+        let productDetailsView = ProductDetailsView(product: product)
+        let hostingController = UIHostingController(rootView: productDetailsView)
+        
+        if let viewController = self.viewController() {
+            viewController.navigationController?.pushViewController(hostingController, animated: true)
+        }
+    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return products.count
     }
@@ -99,3 +109,4 @@ extension SuplierContainerCell {
         return CGSize(width: 150, height: 200)
     }
 }
+
