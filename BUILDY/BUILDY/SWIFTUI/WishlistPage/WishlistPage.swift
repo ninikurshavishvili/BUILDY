@@ -8,59 +8,47 @@
 import SwiftUI
 
 struct WishlistPage: View {
-    
     @EnvironmentObject var wishlistManager: WishlistManager
-    
+
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 20) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(["All", "Accessories", "Electric Kettles"], id: \.self) { category in
+                            Button(action: {
+                            }) {
+                                Text(category)
+                                    .font(.system(size: 16, weight: .medium))
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(category == "All" ? Color.black : Color.gray.opacity(0.2))
+                                    .foregroundColor(category == "All" ? .white : .black)
+                                    .cornerRadius(10)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
                 if wishlistManager.wishlist.isEmpty {
                     Text("Your Wishlist is empty!")
                         .font(.headline)
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 20) {
+                    ScrollView {
+                        VStack(spacing: 15) {
                             ForEach(wishlistManager.wishlist, id: \.codeID) { item in
-                                ProductCard(product: item)
+                                ProductCart(product: item)
                             }
                         }
-                        .padding()
+                        .padding(.horizontal)
                     }
                 }
             }
             .navigationTitle("Wishlist")
-            .onAppear {
-                print("WishlistPage appeared")
-            }
         }
     }
 }
 
-struct ProductCard: View {
-    let product: Product
-    
-    var body: some View {
-        VStack {
-            Image(uiImage: product.imageURL ?? (UIImage(named: "placeholder") ?? UIImage()))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 100, height: 100)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
-            
-            Text(product.name)
-                .font(.body)
-                .fontWeight(.medium)
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-    }
-}
-
-#Preview {
-    WishlistPage()
-}
