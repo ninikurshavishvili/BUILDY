@@ -10,6 +10,7 @@ import UIKit
 struct Product {
     let name: String
     let price: String
+    let codeID: String
     let unit: String
     let featuresGeo: String
     let category: String 

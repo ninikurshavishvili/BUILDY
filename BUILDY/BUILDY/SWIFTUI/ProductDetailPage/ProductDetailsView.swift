@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProductDetailsView: View {
     let product: Product
+    @EnvironmentObject var wishlistManager: WishlistManager
 
     var body: some View {
         ScrollView {
@@ -25,12 +26,12 @@ struct ProductDetailsView: View {
                     .fontWeight(.bold)
                     .padding(.horizontal)
 
-                Text("ფასი: \(product.price) \(product.unit)")
+                Text("Price: \(product.price) \(product.unit)")
                     .font(.headline)
                     .foregroundColor(.orange)
                     .padding(.horizontal)
 
-                Text("მახასიათებლები:")
+                Text("Features:")
                     .font(.headline)
                     .padding(.horizontal)
                 Text(product.featuresGeo)
@@ -38,44 +39,33 @@ struct ProductDetailsView: View {
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
 
-                Text("მომწოდებელი: \(product.supplier)")
+                Text("Supplier: \(product.supplier)")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .padding(.horizontal)
 
-                Spacer()
-
-                HStack(spacing: 16) {
+                HStack {
                     Button(action: {
-                        print("Added \(product.name) to cart.")
+                        if wishlistManager.isInWishlist(product: product) {
+                            wishlistManager.removeFromWishlist(product: product)
+                        } else {
+                            wishlistManager.addToWishlist(product: product)
+                        }
                     }) {
-                        Text("კალათაში დამატება")
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
+                        Text(wishlistManager.isInWishlist(product: product) ? "Remove from Wishlist" : "Add to Wishlist")
+                            .foregroundColor(.red)
                     }
-
-                    Button(action: {
-                        print("Buying \(product.name) now.")
-                    }) {
-                        Text("ყიდვა")
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.orange)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
+                    .padding()
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(8)
                 }
-                .padding(.horizontal)
+
+                Spacer()
             }
+            .padding()
         }
         .navigationTitle(product.name)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
 

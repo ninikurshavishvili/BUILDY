@@ -53,10 +53,12 @@ class HomePageViewModel {
                         let featuresGeo = productInfo["მახასიათებლები GEO"] as? String
                         let category = productInfo["კატეგორია"] as? String
                         let link = productInfo["Links"] as? String
+                        let codeID = productInfo["საძიებო კოდი"] as? String
 
                         return Product(
                             name: name ?? "Unknown",
                             price: price ?? "0",
+                            codeID: codeID ?? "Unknown",
                             unit: unit ?? "",
                             featuresGeo: featuresGeo ?? "",
                             category: category ?? "Unknown",

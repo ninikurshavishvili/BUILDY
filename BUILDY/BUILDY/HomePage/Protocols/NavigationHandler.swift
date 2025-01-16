@@ -24,6 +24,8 @@ class ProductNavigationHandler: NavigationHandler {
     func handleNavigation(for collectionView: UICollectionView, indexPath: IndexPath, navigationController: UINavigationController?) {
         let selectedProduct = viewModel.products[indexPath.item]
         let productDetailsView = ProductDetailsView(product: selectedProduct)
+            .environmentObject(WishlistManager.shared)
+        
         let hostingController = UIHostingController(rootView: productDetailsView)
         navigationController?.pushViewController(hostingController, animated: true)
     }

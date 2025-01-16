@@ -1,25 +1,25 @@
 //
-//  CategoryDetailNavigationHandler.swift
+//  ShopPageNavigationHandler.swift
 //  BUILDY
 //
-//  Created by Nino Kurshavishvili on 15.01.25.
+//  Created by Nino Kurshavishvili on 16.01.25.
 //
-
 
 import UIKit
 import SwiftUI
 
-class CategoryDetailNavigationHandler: CategoryDetailNavigation {
+protocol ShopPageNavigation {
+    func navigateToProductDetails(from viewController: UIViewController, with product: Product)
+}
+
+class ShopPageNavigationHandler: ShopPageNavigation {
+    
     func navigateToProductDetails(from viewController: UIViewController, with product: Product) {
         let productDetailsView = ProductDetailsView(product: product)
             .environmentObject(WishlistManager.shared)
         
         let hostingController = UIHostingController(rootView: productDetailsView)
+        
         viewController.navigationController?.pushViewController(hostingController, animated: true)
     }
-}
-
-
-protocol CategoryDetailNavigation {
-    func navigateToProductDetails(from viewController: UIViewController, with product: Product)
 }

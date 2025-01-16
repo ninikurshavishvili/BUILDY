@@ -83,8 +83,10 @@ class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICo
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let product = products[indexPath.item]
-
+        
         let productDetailsView = ProductDetailsView(product: product)
+            .environmentObject(WishlistManager.shared)
+        
         let hostingController = UIHostingController(rootView: productDetailsView)
         
         if let viewController = self.viewController() {

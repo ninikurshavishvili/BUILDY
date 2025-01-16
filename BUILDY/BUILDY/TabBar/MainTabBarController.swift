@@ -4,7 +4,6 @@
 //
 //  Created by Nino Kurshavishvili on 05.01.25.
 //
-
 import UIKit
 import SwiftUI
 
@@ -22,14 +21,15 @@ class MainTabBarController: UITabBarController {
         let shopVC = ShopViewController()
         shopVC.tabBarItem = UITabBarItem(title: "Shops", image: UIImage(systemName: "building.2.fill"), tag: 2)
 
-        let wishlistPageVC = UIHostingController(rootView: WishlistPage())
+        let wishlistPageVC = UIHostingController(rootView: WishlistPage().environmentObject(WishlistManager.shared))
         wishlistPageVC.tabBarItem = UITabBarItem(title: "Wishlist", image: UIImage(systemName: "heart.fill"), tag: 3)
 
-        let cartPageVC = UIHostingController(rootView: CartPage())
+        let cartPageVC = UIHostingController(rootView: CartPage().environmentObject(WishlistManager.shared))
         cartPageVC.tabBarItem = UITabBarItem(title: "Cart", image: UIImage(systemName: "cart.fill"), tag: 4)
 
         let tabBarList = [homePageVC, categoriesPageVC, shopVC, wishlistPageVC, cartPageVC]
         viewControllers = tabBarList
     }
 }
+
 

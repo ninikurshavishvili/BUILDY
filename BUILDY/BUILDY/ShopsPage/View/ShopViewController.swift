@@ -24,6 +24,8 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         return collectionView
     }()
 
+    private let navigationHandler = ShopPageNavigationHandler()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
@@ -71,5 +73,18 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedManufacturer = manufacturers[indexPath.item]
+        
+        let viewModel = HomePageViewModel()
+        let allProducts = viewModel.products
+        let filteredProducts = viewModel.filteredBySupplier(for: selectedManufacturer.name, from: allProducts)
+        
+        guard let firstProduct = filteredProducts.first else { return }
+        
+        navigationHandler.navigateToProductDetails(from: self, with: firstProduct)
+    }
 }
+
 
