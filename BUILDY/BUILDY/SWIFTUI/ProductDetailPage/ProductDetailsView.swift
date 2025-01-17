@@ -10,6 +10,7 @@ import SwiftUI
 struct ProductDetailsView: View {
     let product: Product
     @EnvironmentObject var wishlistManager: WishlistManager
+    @EnvironmentObject var cartManager: CartManager
 
     var body: some View {
         ScrollView {
@@ -20,7 +21,7 @@ struct ProductDetailsView: View {
                     .frame(maxHeight: 300)
                     .cornerRadius(8)
                     .padding()
-                    
+                
                 Text(product.name)
                     .font(.title)
                     .fontWeight(.bold)
@@ -58,7 +59,20 @@ struct ProductDetailsView: View {
                     .padding()
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(8)
+
+                    Spacer()
+
+                    Button(action: {
+                        cartManager.addToCart(product: product)
+                    }) {
+                        Text("Add to Cart")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.green)
+                            .cornerRadius(8)
+                    }
                 }
+                .padding(.horizontal)
 
                 Spacer()
             }
@@ -68,4 +82,3 @@ struct ProductDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-

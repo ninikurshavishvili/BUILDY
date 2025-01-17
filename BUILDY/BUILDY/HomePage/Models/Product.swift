@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Product {
+struct Product: Hashable {
     let name: String
     let price: String
     let codeID: String
