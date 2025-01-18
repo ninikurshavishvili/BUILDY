@@ -24,7 +24,6 @@ class ProductsDataSource: NSObject, UICollectionViewDataSource {
         
         cell.nameLabel.text = product.name
         cell.priceLabel.text = "\(product.price)"
-        cell.supplierLabel.text = "Supplier: \(product.supplier)"
         
         if let imageURL = product.imageURL {
             cell.productImageView.image = imageURL
@@ -33,4 +32,5 @@ class ProductsDataSource: NSObject, UICollectionViewDataSource {
         }
         return cell
     }
+
 }

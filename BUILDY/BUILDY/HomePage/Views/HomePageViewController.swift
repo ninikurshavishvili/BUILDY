@@ -121,19 +121,20 @@ class HomePageViewController: UIViewController {
             categoriesContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             categoriesContainerCell.heightAnchor.constraint(equalToConstant: 160),
 
-            productsContainerCell.topAnchor.constraint(equalTo: categoriesContainerCell.bottomAnchor, constant: 16),
-            productsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            productsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            productsContainerCell.heightAnchor.constraint(equalToConstant: 250),
-
-            productCarouselCell.topAnchor.constraint(equalTo: productsContainerCell.bottomAnchor, constant: 16),
+            productCarouselCell.topAnchor.constraint(equalTo: categoriesContainerCell.bottomAnchor, constant: 16),
             productCarouselCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             productCarouselCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             productCarouselCell.heightAnchor.constraint(equalToConstant: 300),
 
-            productCarouselCell.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            productsContainerCell.topAnchor.constraint(equalTo: productCarouselCell.bottomAnchor, constant: 16),
+            productsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            productsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            productsContainerCell.heightAnchor.constraint(equalToConstant: 250),
+
+            productsContainerCell.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
+
 
     private func fetchData() {
         categoriesViewModel.fetchCategories()
@@ -152,8 +153,12 @@ class HomePageViewController: UIViewController {
         }
     }
 }
-extension HomePageViewController: UICollectionViewDelegate {
 
+
+// MARK: - UICollectionViewDataSource & UICollectionViewDelegateFlowLayout
+
+extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == productsContainerCell.productsCollectionView {
             productNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
@@ -161,11 +166,6 @@ extension HomePageViewController: UICollectionViewDelegate {
             categoryNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
         }
     }
-}
-
-// MARK: - UICollectionViewDataSource & UICollectionViewDelegateFlowLayout
-
-extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == categoriesContainerCell.categoriesCollectionView {
@@ -194,58 +194,21 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
     }
 }
 
+import SwiftUI
 
-//MARK: - saving Delegate and datasource extensions just in case
+struct HomePageViewControllerRepresentable: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> HomePageViewController {
+        return HomePageViewController()
+    }
 
-// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
-//
-//extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-//
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        if collectionView == categoriesContainerCell.categoriesCollectionView {
-//            return categoriesViewModel.categories.count
-//        } else if collectionView == productsContainerCell.productsCollectionView {
-//            return viewModel.products.count
-//        }
-//        return 0
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        if collectionView == categoriesContainerCell.categoriesCollectionView {
-//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoriesCell.identifier, for: indexPath) as! CategoriesCell
-//            let category = categoriesViewModel.categories[indexPath.item]
-//            cell.configure(with: category)
-//            return cell
-//        } else {
-//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.reuseIdentifier, for: indexPath) as! ProductCell
-//            let product = viewModel.products[indexPath.item]
-//            cell.nameLabel.text = product.name
-//            cell.priceLabel.text = "\(product.price)"
-//            cell.supplierLabel.text = "Supplier: \(product.supplier)"
-//            if let imageURL = product.imageURL {
-//                cell.productImageView.image = imageURL
-//            } else {
-//                cell.productImageView.image = UIImage(named: "placeholder")
-//            }
-//            return cell
-//        }
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        if collectionView == categoriesContainerCell.categoriesCollectionView {
-//            return CGSize(width: 100, height: 120)
-//        } else if collectionView == productsContainerCell.productsCollectionView {
-//            return CGSize(width: 200, height: 250)
-//        }
-//        return .zero
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        if collectionView == productsContainerCell.productsCollectionView {
-//            productNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
-//        } else if collectionView == categoriesContainerCell.categoriesCollectionView {
-//            categoryNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
-//        }
-//    } 
-//}
+    func updateUIViewController(_ uiViewController: HomePageViewController, context: Context) {
 
+    }
+}
+struct HomePageViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        HomePageViewControllerRepresentable()
+            .previewLayout(.sizeThatFits)
+            .edgesIgnoringSafeArea(.all)
+    }
+}
