@@ -12,7 +12,7 @@ struct CartPage: View {
     @EnvironmentObject var cartManager: CartManager
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 if cartManager.cartItems.isEmpty {
                     Text("Your cart is empty.")
@@ -38,7 +38,6 @@ struct CartPage: View {
                         .fontWeight(.bold)
                     Spacer()
                     Button(action: {
-
                     }) {
                         Text("Checkout")
                             .font(.headline)
@@ -54,4 +53,5 @@ struct CartPage: View {
         }
     }
 }
+
 
