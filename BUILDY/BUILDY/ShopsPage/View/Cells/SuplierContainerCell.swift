@@ -80,15 +80,16 @@ class SuplierContainerCell: UICollectionViewCell, UICollectionViewDelegate, UICo
             viewController.navigationController?.pushViewController(shopDetailsVC, animated: true)
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let product = products[indexPath.item]
         
         let productDetailsView = ProductDetailsView(product: product)
             .environmentObject(WishlistManager.shared)
-        
+            .environmentObject(CartManager.shared)
+
         let hostingController = UIHostingController(rootView: productDetailsView)
-        
+
         if let viewController = self.viewController() {
             viewController.navigationController?.pushViewController(hostingController, animated: true)
         }

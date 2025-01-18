@@ -12,6 +12,8 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
     
     var supplier: Suplier?
     private var filteredProducts: [Product] = []
+    private let navigationHandler = ShopDetailsNavigationHandler()
+
 
     private let supplierNameLabel: UILabel = {
         let label = UILabel()
@@ -110,11 +112,6 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedProduct = filteredProducts[indexPath.item]
-
-        let productDetailsView = ProductDetailsView(product: selectedProduct)
-        
-        let hostingController = UIHostingController(rootView: productDetailsView)
-
-        navigationController?.pushViewController(hostingController, animated: true)
+        navigationHandler.navigateToProductDetails(from: self, with: selectedProduct)
     }
 }
