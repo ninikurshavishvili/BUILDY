@@ -40,7 +40,7 @@ struct WishlistPage: View {
                     ScrollView {
                         VStack(spacing: 15) {
                             ForEach(wishlistManager.wishlist, id: \.codeID) { item in
-                                ProductCart(product: item)
+                                ProductCard(product: item)
                             }
                         }
                         .padding(.horizontal)

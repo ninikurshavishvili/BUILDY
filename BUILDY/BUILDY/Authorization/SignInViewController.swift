@@ -107,14 +107,12 @@ class SignInViewController: UIViewController {
     }
     
     @objc private func signInTapped() {
-        guard let email = emailTextField.text, let password = passwordTextField.text else {
-            return
-        }
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
         viewModel.signIn(email: email, password: password)
     }
     
     @objc private func cancelTapped() {
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
 }
 
