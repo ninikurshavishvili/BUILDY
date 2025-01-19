@@ -5,7 +5,7 @@
 //  Created by Nino Kurshavishvili on 16.01.25.
 //
 
-import SwiftUI
+import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
@@ -15,7 +15,7 @@ class CartManager: ObservableObject {
     static let shared = CartManager()
 
     private let db = Firestore.firestore()
-    
+
     private var userID: String? {
         return Auth.auth().currentUser?.uid
     }
@@ -45,20 +45,24 @@ class CartManager: ObservableObject {
 
     func getTotalPrice() -> Double {
         return cartItems.reduce(0) { total, item in
-            let price = Double(item.key.price) ?? 0.0
+            let price = Double(item.key.price.replacingOccurrences(of: "GEL", with: "").replacingOccurrences(of: ",", with: "").trimmingCharacters(in: .whitespaces)) ?? 0.0
             return total + (price * Double(item.value))
         }
     }
 
-    
     // MARK: - Save in Firestore
     private func saveToFirestore(product: Product) {
         guard let userID = userID else { return }
 
         let productData: [String: Any] = [
+            "category": product.category,
+            "featuresGeo": product.featuresGeo,
+            "link": product.link ?? "",
             "name": product.name,
             "price": product.price,
-            "quantity": cartItems[product] ?? 1
+            "quantity": cartItems[product] ?? 1,
+            "supplier": product.supplier,
+            "unit": product.unit
         ]
 
         db.collection("users")
@@ -69,12 +73,11 @@ class CartManager: ObservableObject {
                 if let error = error {
                     print("Error saving product to Firestore: \(error.localizedDescription)")
                 } else {
-                    print("Product saved successfully: \(product.name)")
+                    print("Product saved to cart: \(product.name)")
                 }
             }
     }
 
-    // MARK: - Delete from Firestore
     private func deleteFromFirestore(product: Product) {
         guard let userID = userID else { return }
 
@@ -86,9 +89,54 @@ class CartManager: ObservableObject {
                 if let error = error {
                     print("Error deleting product from Firestore: \(error.localizedDescription)")
                 } else {
-                    print("Product deleted successfully: \(product.name)")
+                    print("Product removed from cart: \(product.name)")
+                }
+            }
+    }
+
+    func fetchCartFromFirestore() {
+        guard let userID = userID else { return }
+
+        db.collection("users")
+            .document(userID)
+            .collection("cart")
+            .getDocuments { [weak self] snapshot, error in
+                guard let self = self else { return }
+
+                if let error = error {
+                    print("Error fetching cart: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let documents = snapshot?.documents else { return }
+
+                self.cartItems.removeAll()
+                for document in documents {
+                    let data = document.data()
+                    if let name = data["name"] as? String,
+                       let price = data["price"] as? String,
+                       let unit = data["unit"] as? String,
+                       let featuresGeo = data["featuresGeo"] as? String,
+                       let category = data["category"] as? String,
+                       let link = data["link"] as? String,
+                       let supplier = data["supplier"] as? String,
+                       let quantity = data["quantity"] as? Int {
+                        let product = Product(
+                            name: name,
+                            price: price,
+                            codeID: document.documentID,
+                            unit: unit,
+                            featuresGeo: featuresGeo,
+                            category: category,
+                            link: link,
+                            imageURL: nil,
+                            supplier: supplier
+                        )
+                        self.cartItems[product] = quantity
+                    }
                 }
             }
     }
 }
+
 
