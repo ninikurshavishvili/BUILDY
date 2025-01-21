@@ -112,8 +112,9 @@ class AuthorizationPage: UIViewController {
     }
 
     @objc private func guestButtonTapped() {
+        viewModel.enterAsGuest()
         let tabBarController = MainTabBarController()
-        navigationController?.pushViewController(tabBarController, animated: true)
+        navigationController?.setViewControllers([tabBarController], animated: true)
     }
     
     private func showSignIn() {

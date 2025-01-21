@@ -7,10 +7,15 @@
 import UIKit
 import SwiftUI
 
-class MainTabBarController: UITabBarController {
+class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
+
+    private var isGuestUser: Bool {
+        UserDefaults.standard.bool(forKey: "isGuest")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        delegate = self
 
         let homePageVC = HomePageViewController()
         homePageVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
@@ -35,8 +40,31 @@ class MainTabBarController: UITabBarController {
         )
         cartPageVC.tabBarItem = UITabBarItem(title: "Cart", image: UIImage(systemName: "cart.fill"), tag: 4)
 
-        let tabBarList = [homePageVC, categoriesPageVC, shopVC, wishlistPageVC, cartPageVC]
-        viewControllers = tabBarList
+        viewControllers = [homePageVC, categoriesPageVC, shopVC, wishlistPageVC, cartPageVC]
     }
+
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if let index = viewControllers?.firstIndex(of: viewController), index == 3 || index == 4 {
+            if isGuestUser {
+                presentAuthorizationScreen()
+                return false
+            }
+        }
+        return true
+    }
+
+    private func presentAuthorizationScreen() {
+        let authorizationVC = AuthorizationPage()
+        let navController = UINavigationController(rootViewController: authorizationVC)
+        navController.modalPresentationStyle = .fullScreen
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = navController
+            window.makeKeyAndVisible()
+        }
+    }
+
 }
+
 
