@@ -10,6 +10,7 @@ import SwiftUI
 
 struct CartPage: View {
     @EnvironmentObject var cartManager: CartManager
+    @State private var showCheckoutPopup = false
 
     var body: some View {
         NavigationStack {
@@ -37,25 +38,28 @@ struct CartPage: View {
                         .font(.title3)
                         .fontWeight(.bold)
                     Spacer()
-                    Button(action: {
-                    }) {
-                        Text("Checkout")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.black)
-                            .cornerRadius(8)
-                    }
+                    NavigationLink(
+                        destination: PlaceOrderView(cartItems: cartManager.cartItems),
+                        label: {
+                            Text("Checkout")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black)
+                                .cornerRadius(8)
+                        })
+
                 }
                 .padding()
             }
             .navigationTitle("Shopping Cart")
             .onAppear {
-                cartManager.fetchCartFromFirestore()  
+                cartManager.fetchCartFromFirestore()
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
     }
 }
-
 
 

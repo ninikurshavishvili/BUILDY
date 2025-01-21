@@ -49,6 +49,8 @@ struct WishlistPage: View {
             }
             .navigationTitle("Wishlist")
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
     }
 }
 
