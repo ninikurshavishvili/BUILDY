@@ -90,13 +90,17 @@ class SignInViewController: UIViewController {
     }
     
     private func setupBindings() {
-        viewModel.onSignInSuccess = { [weak self] user in
+        viewModel.onSignInSuccess = { user in
             print("✅ Successfully signed in!")
             print("User Email: \(user.email ?? "N/A")")
             print("User UID: \(user.uid)")
 
             let tabBarController = MainTabBarController()
-            self?.navigationController?.pushViewController(tabBarController, animated: true)
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else { return }
+            window.rootViewController = tabBarController
+            window.makeKeyAndVisible()
+
         }
 
         viewModel.onSignInFailure = { [weak self] errorMessage in
