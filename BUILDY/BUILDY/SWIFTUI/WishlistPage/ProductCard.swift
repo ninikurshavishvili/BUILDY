@@ -12,12 +12,28 @@ struct ProductCard: View {
 
     var body: some View {
         HStack(spacing: 15) {
-            Image(uiImage: product.imageURL ?? (UIImage(named: "placeholder") ?? UIImage()))
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 80, height: 80)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
+            AsyncImage(url: product.linkToURL) { phase in
+                switch phase {
+                case .empty:
+                    Image("placeholder")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .success(let image):
+                    image.resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure:
+                    Image("placeholder")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                @unknown default:
+                    Image("placeholder")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                }
+            }
+            .frame(width: 80, height: 80)
+            .background(Color.gray.opacity(0.2))
+            .cornerRadius(10)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(product.name)

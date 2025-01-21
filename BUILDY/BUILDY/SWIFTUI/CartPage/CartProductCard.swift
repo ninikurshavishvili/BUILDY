@@ -14,11 +14,27 @@ struct CartProductCard: View {
 
     var body: some View {
         HStack {
-            Image(uiImage: product.imageURL ?? (UIImage(named: "placeholder") ?? UIImage()))
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 80)
-                .cornerRadius(8)
+            AsyncImage(url: product.linkToURL) { phase in
+                switch phase {
+                case .empty:
+                    Image("placeholder") 
+                        .resizable()
+                        .scaledToFit()
+                case .success(let image):
+                    image.resizable()
+                        .scaledToFit()
+                case .failure:
+                    Image("placeholder")
+                        .resizable()
+                        .scaledToFit()
+                @unknown default:
+                    Image("placeholder")
+                        .resizable()
+                        .scaledToFit()
+                }
+            }
+            .frame(width: 80, height: 80)
+            .cornerRadius(8)
 
             VStack(alignment: .leading) {
                 Text(product.name)

@@ -16,14 +16,13 @@ class AuthorizationViewModel {
     var onSignInRequested: (() -> Void)?
 
     private let db = Firestore.firestore()
-    private var cartItems: [Product: Int] = [:]
 
     var isGuest: Bool {
         return UserDefaults.standard.bool(forKey: "isGuest")
     }
 
     var userID: String? {
-        return UserDefaults.standard.string(forKey: "userUID")
+        return Auth.auth().currentUser?.uid
     }
 
     func signInTapped() {
@@ -40,7 +39,7 @@ class AuthorizationViewModel {
             return
         }
 
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
             guard let self = self else { return }
 
             if let error = error {
@@ -48,14 +47,12 @@ class AuthorizationViewModel {
                 return
             }
 
-            if let user = result?.user {
-                UserDefaults.standard.set(user.email, forKey: "userEmail")
-                UserDefaults.standard.set(user.uid, forKey: "userUID")
-                UserDefaults.standard.set(false, forKey: "isGuest") 
-                self.onSignInSuccess?(user)
-            } else {
+            guard let user = result?.user else {
                 self.onSignInFailure?("Unexpected error occurred.")
+                return
             }
+
+            self.storeUserSession(user: user)
         }
     }
 
@@ -65,7 +62,7 @@ class AuthorizationViewModel {
             return
         }
 
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             guard let self = self else { return }
 
             if let error = error {
@@ -73,19 +70,46 @@ class AuthorizationViewModel {
                 return
             }
 
-            if let user = result?.user {
-                UserDefaults.standard.set(user.email, forKey: "userEmail")
-                UserDefaults.standard.set(user.uid, forKey: "userUID")
-                UserDefaults.standard.set(false, forKey: "isGuest")
-                self.onSignInSuccess?(user)
-            }
+            guard let user = result?.user else { return }
+
+            self.storeUserSession(user: user)
         }
+    }
+
+    private func storeUserSession(user: User) {
+        UserDefaults.standard.set(user.uid, forKey: "userUID")
+        UserDefaults.standard.set(false, forKey: "isGuest")
+
+        CartManager.shared.fetchCartFromFirestore()
+        WishlistManager.shared.fetchWishlistFromFirestore()
+
+        onSignInSuccess?(user)
     }
 
     func enterAsGuest() {
         UserDefaults.standard.set(true, forKey: "isGuest")
         UserDefaults.standard.removeObject(forKey: "userUID")
-        UserDefaults.standard.removeObject(forKey: "userEmail")
+    }
+
+    func signOut() {
+        do {
+            try Auth.auth().signOut()
+            UserDefaults.standard.removeObject(forKey: "userUID")
+            UserDefaults.standard.set(true, forKey: "isGuest")
+
+            CartManager.shared.clearCart()
+            
+        } catch {
+            print("Error signing out: \(error.localizedDescription)")
+        }
+    }
+
+    func restoreSession() {
+        if let user = Auth.auth().currentUser {
+            storeUserSession(user: user)
+        } else {
+            enterAsGuest()
+        }
     }
 }
 

@@ -17,4 +17,16 @@ struct Product: Hashable {
     let link: String?
     var imageURL: UIImage?
     let supplier: String
+    
+    var linkToURL: URL? {
+        return URL(string: link ?? "")
+    }
+
+    static func == (lhs: Product, rhs: Product) -> Bool {
+        return lhs.codeID == rhs.codeID
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(codeID)
+    }
 }

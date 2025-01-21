@@ -50,8 +50,12 @@ struct CartPage: View {
                 .padding()
             }
             .navigationTitle("Shopping Cart")
+            .onAppear {
+                cartManager.fetchCartFromFirestore()  
+            }
         }
     }
 }
+
 
 

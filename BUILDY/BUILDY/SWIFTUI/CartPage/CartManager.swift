@@ -11,10 +11,9 @@ import FirebaseAuth
 
 class CartManager: ObservableObject {
     @Published private(set) var cartItems: [Product: Int] = [:]
+    private let db = Firestore.firestore()
 
     static let shared = CartManager()
-
-    private let db = Firestore.firestore()
 
     private var userID: String? {
         return Auth.auth().currentUser?.uid
@@ -109,10 +108,13 @@ class CartManager: ObservableObject {
                 }
 
                 guard let documents = snapshot?.documents else { return }
+                print("🔵🔵🔵🔵🔵🔵Fetched \(documents.count) products from Firestore")
 
                 self.cartItems.removeAll()
                 for document in documents {
                     let data = document.data()
+                    print("🔵🔵🔵🔵🔵Fetched product data: \(data)🔵🔵🔵🔵🔵")
+
                     if let name = data["name"] as? String,
                        let price = data["price"] as? String,
                        let unit = data["unit"] as? String,
@@ -136,6 +138,35 @@ class CartManager: ObservableObject {
                     }
                 }
             }
+    }
+
+
+    private func mapToProduct(data: [String: Any], id: String) -> Product? {
+        guard let name = data["name"] as? String,
+              let price = data["price"] as? String,
+              let unit = data["unit"] as? String,
+              let featuresGeo = data["featuresGeo"] as? String,
+              let category = data["category"] as? String,
+              let link = data["link"] as? String,
+              let supplier = data["supplier"] as? String else {
+            return nil
+        }
+
+        return Product(
+            name: name,
+            price: price,
+            codeID: id,
+            unit: unit,
+            featuresGeo: featuresGeo,
+            category: category,
+            link: link,
+            imageURL: nil,
+            supplier: supplier
+        )
+    }
+
+    func clearCart() {
+        cartItems.removeAll()
     }
 }
 
