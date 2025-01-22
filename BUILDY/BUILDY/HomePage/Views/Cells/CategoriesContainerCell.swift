@@ -19,7 +19,7 @@ class CategoriesContainerCell: UICollectionViewCell {
         return label
     }()
 
-    private let seeAllButton: UIButton = {
+    private let seeAllCategories: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("See All", for: .normal)
         button.setTitleColor(.systemOrange, for: .normal)
@@ -42,7 +42,7 @@ class CategoriesContainerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        seeAllButton.addTarget(self, action: #selector(seeAllTapped), for: .touchUpInside)
+        seeAllCategories.addTarget(self, action: #selector(seeAllTapped), for: .touchUpInside)
     }
 
     required init?(coder: NSCoder) {
@@ -51,15 +51,15 @@ class CategoriesContainerCell: UICollectionViewCell {
 
     private func setupUI() {
         contentView.addSubview(categoriesTitleLabel)
-        contentView.addSubview(seeAllButton)
+        contentView.addSubview(seeAllCategories)
         contentView.addSubview(categoriesCollectionView)
 
         NSLayoutConstraint.activate([
             categoriesTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             categoriesTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
 
-            seeAllButton.centerYAnchor.constraint(equalTo: categoriesTitleLabel.centerYAnchor),
-            seeAllButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            seeAllCategories.centerYAnchor.constraint(equalTo: categoriesTitleLabel.centerYAnchor),
+            seeAllCategories.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
             categoriesCollectionView.topAnchor.constraint(equalTo: categoriesTitleLabel.bottomAnchor, constant: 8),
             categoriesCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
