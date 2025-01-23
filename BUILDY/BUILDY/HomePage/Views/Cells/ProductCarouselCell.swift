@@ -35,6 +35,9 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
     private func setupUI() {
         contentView.addSubview(collectionView)
         
+        contentView.layer.cornerRadius = 16
+        contentView.layer.masksToBounds = true
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(ProductCell.self, forCellWithReuseIdentifier: "ProductCell")
@@ -46,6 +49,7 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
             collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
+
     
     func configure(with products: [Product]) {
         self.products = products.shuffled().prefix(5).map { $0 }
@@ -70,19 +74,19 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
     }
     
     // MARK: - Visual Customization of Cells
-    private func configureCell(cell: UICollectionViewCell, with product: Product) {
+    func configureCell(cell: UICollectionViewCell, with product: Product) {
         cell.contentView.subviews.forEach { $0.removeFromSuperview() }
         
         let productImageView = UIImageView()
         productImageView.contentMode = .scaleAspectFill
-        productImageView.clipsToBounds = true
+        productImageView.clipsToBounds = true 
         productImageView.translatesAutoresizingMaskIntoConstraints = false
         productImageView.image = product.imageURL
         cell.contentView.addSubview(productImageView)
         
         let blurEffect = UIBlurEffect(style: .light)
         let blurContainer = UIVisualEffectView(effect: blurEffect)
-        blurContainer.layer.cornerRadius = 18
+        blurContainer.layer.cornerRadius = 16
         blurContainer.clipsToBounds = true
         blurContainer.translatesAutoresizingMaskIntoConstraints = false
         cell.contentView.addSubview(blurContainer)

@@ -10,196 +10,252 @@ import SwiftUI
 
 class HomePageViewController: UIViewController {
     
-    private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.showsVerticalScrollIndicator = false
-        return scrollView
-    }()
-
-    private let contentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "მოძებნე"
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        return searchBar
-    }()
-
-    private let categoriesContainerCell: CategoriesContainerCell = {
-        let cell = CategoriesContainerCell()
-        cell.translatesAutoresizingMaskIntoConstraints = false
-        return cell
-    }()
-
-    private let productsContainerCell: ProductsContainerCell = {
-        let cell = ProductsContainerCell()
-        cell.translatesAutoresizingMaskIntoConstraints = false
-        return cell
-    }()
-
-    private let productCarouselCell: ProductCarouselCell = {
-        let cell = ProductCarouselCell()
-        cell.translatesAutoresizingMaskIntoConstraints = false
-        return cell
-    }()
     
-    private let shopsContainerCell: ShopsContainerCell = {
-        let cell = ShopsContainerCell()
-        cell.translatesAutoresizingMaskIntoConstraints = false
-        return cell
-    }()
-
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    private let searchBar = UISearchBar()
+    private let categoriesContainerCell = CategoriesContainerCell()
+    private let productsContainerCell = ProductsContainerCell()
+    private let productCarouselCell = ProductCarouselCell()
+    private let shopsContainerCell = ShopsContainerCell()
+    private let addViewCell = AddViewCell()
+    
+    private let topBarView = UIStackView()
+    private let logoImageView = UIImageView()
+    private let profileButton = UIButton()
+    
+    
     private var categoriesViewModel = CategoriesViewModel()
     private var viewModel = HomePageViewModel()
+    private var shopViewModel = ShopViewModel()
     
-    private let topBarView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
-    private let logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "BUILDY_LOGO")
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-
-    private let profileButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "person"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
-        return button
-    }()
-
-    @objc private func profileButtonTapped() {
-        print("Profile button tapped")
-    }
-
-    //MARK: I should fix it to be optional values🥁🥁
     private var productNavigationHandler: NavigationHandler!
     private var categoryNavigationHandler: NavigationHandler!
-    private var dataFetcher: DataFetcher!
-    
     private var categoriesDataSource: CategoriesDataSource!
     private var productsDataSource: ProductsDataSource!
-    
-    private var shopViewModel = ShopViewModel()
     private var shopsDataSource: ShopsDataSource!
+    private var dataFetcher: HomePageDataFetcher!
 
+     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        configureUI()
         setupDataSources()
         fetchData()
         
         productNavigationHandler = ProductNavigationHandler(viewModel: viewModel)
         categoryNavigationHandler = CategoryNavigationHandler(categoriesViewModel: categoriesViewModel, viewModel: viewModel)
     }
-    
-    private func setupUI() {
-    
-        view.backgroundColor = .white
         
-        view.addSubview(topBarView)
+    private func configureUI() {
+        view.backgroundColor = .white
+        configureTopBarView()
+        configureScrollView()
+        configureContentView()
+        configureSearchBar()
+        configureCells()
+        setupConstraints()
+    }
+    
+    private func configureTopBarView() {
+        topBarView.axis = .horizontal
+        topBarView.alignment = .center
+        topBarView.distribution = .equalSpacing
+        topBarView.translatesAutoresizingMaskIntoConstraints = false
+        
+        logoImageView.image = UIImage(named: "BUILDY_LOGO")
+        logoImageView.contentMode = .scaleAspectFit
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        profileButton.setImage(UIImage(named: "person"), for: .normal)
+        profileButton.translatesAutoresizingMaskIntoConstraints = false
+        profileButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+        
         topBarView.addArrangedSubview(logoImageView)
         topBarView.addArrangedSubview(profileButton)
-
+        view.addSubview(topBarView)
+    }
+    
+    private func configureScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
         view.addSubview(scrollView)
+    }
+    
+    private func configureContentView() {
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
-
+    }
+    
+    private func configureSearchBar() {
+        searchBar.placeholder = "მოძებნე"
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(searchBar)
+    }
+    
+    private func configureCells() {
+        categoriesContainerCell.translatesAutoresizingMaskIntoConstraints = false
+        productsContainerCell.translatesAutoresizingMaskIntoConstraints = false
+        productCarouselCell.translatesAutoresizingMaskIntoConstraints = false
+        shopsContainerCell.translatesAutoresizingMaskIntoConstraints = false
+        addViewCell.translatesAutoresizingMaskIntoConstraints = false
+        
+        let cornerRadius: CGFloat = 16
+        categoriesContainerCell.layer.cornerRadius = cornerRadius
+        productsContainerCell.layer.cornerRadius = cornerRadius
+        productCarouselCell.layer.cornerRadius = cornerRadius
+        shopsContainerCell.layer.cornerRadius = cornerRadius
+        addViewCell.layer.cornerRadius = cornerRadius
+        
         contentView.addSubview(categoriesContainerCell)
         contentView.addSubview(productsContainerCell)
         contentView.addSubview(productCarouselCell)
         contentView.addSubview(shopsContainerCell)
-
-        setupConstraints()
-
+        contentView.addSubview(addViewCell)
     }
     
-    private func setupDataSources() {
-        categoriesDataSource = CategoriesDataSource(viewModel: categoriesViewModel)
-        productsDataSource = ProductsDataSource(viewModel: viewModel)
-        shopsDataSource = ShopsDataSource(viewModel: shopViewModel)
-
-        categoriesContainerCell.configure(delegate: self, dataSource: categoriesDataSource) { [weak self] in
-            guard let self = self else { return }
-            let categoriesVC = CategoriesViewController()
-            self.navigationController?.pushViewController(categoriesVC, animated: true)
-        }
-
-        productsContainerCell.configure(delegate: self, dataSource: productsDataSource)
-
-        shopsContainerCell.configure(delegate: self, dataSource: self) { [weak self] in
-            guard let self = self else { return }
-            let shopViewController = ShopViewController()
-            self.navigationController?.pushViewController(shopViewController, animated: true)
-        }
-    }
     
-
     private func setupConstraints() {
+        setupTopBarViewConstraints()
+        setupScrollViewConstraints()
+        setupContentViewConstraints()
+        setupSearchBarConstraints()
+        setupCategoriesContainerConstraints()
+        setupProductCarouselConstraints()
+        setupShopsContainerConstraints()
+        setupAddViewConstraints()
+        setupProductsContainerConstraints()
+    }
+
+    private func setupTopBarViewConstraints() {
         NSLayoutConstraint.activate([
             topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             topBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             topBarView.heightAnchor.constraint(equalToConstant: 50),
-
+            
             logoImageView.heightAnchor.constraint(equalToConstant: 40),
             logoImageView.widthAnchor.constraint(equalToConstant: 120),
-
+            
             profileButton.heightAnchor.constraint(equalToConstant: 40),
-            profileButton.widthAnchor.constraint(equalToConstant: 40),
+            profileButton.widthAnchor.constraint(equalToConstant: 40)
+        ])
+    }
 
+    private func setupScrollViewConstraints() {
+        NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topBarView.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
 
+    private func setupContentViewConstraints() {
+        NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
+    }
 
+    private func setupSearchBarConstraints() {
+        NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+        ])
+    }
 
+    private func setupCategoriesContainerConstraints() {
+        NSLayoutConstraint.activate([
             categoriesContainerCell.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             categoriesContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             categoriesContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            categoriesContainerCell.heightAnchor.constraint(equalToConstant: 160),
+            categoriesContainerCell.heightAnchor.constraint(equalToConstant: 160)
+        ])
+    }
 
+    private func setupProductCarouselConstraints() {
+        NSLayoutConstraint.activate([
             productCarouselCell.topAnchor.constraint(equalTo: categoriesContainerCell.bottomAnchor, constant: 16),
             productCarouselCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             productCarouselCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            productCarouselCell.heightAnchor.constraint(equalToConstant: 300),
+            productCarouselCell.heightAnchor.constraint(equalToConstant: 300)
+        ])
+    }
 
+    private func setupShopsContainerConstraints() {
+        NSLayoutConstraint.activate([
             shopsContainerCell.topAnchor.constraint(equalTo: productCarouselCell.bottomAnchor, constant: 16),
             shopsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             shopsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            shopsContainerCell.heightAnchor.constraint(equalToConstant: 160),
+            shopsContainerCell.heightAnchor.constraint(equalToConstant: 160)
+        ])
+    }
 
-            productsContainerCell.topAnchor.constraint(equalTo: shopsContainerCell.bottomAnchor, constant: 16),
+    private func setupAddViewConstraints() {
+        NSLayoutConstraint.activate([
+            addViewCell.topAnchor.constraint(equalTo: shopsContainerCell.bottomAnchor, constant: 16),
+            addViewCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            addViewCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            addViewCell.heightAnchor.constraint(equalToConstant: 300)
+        ])
+    }
+
+    private func setupProductsContainerConstraints() {
+        NSLayoutConstraint.activate([
+            productsContainerCell.topAnchor.constraint(equalTo: addViewCell.bottomAnchor, constant: 16),
             productsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             productsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             productsContainerCell.heightAnchor.constraint(equalToConstant: 250),
-
             productsContainerCell.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
 
+    }
+    
+    private func setupDataSources() {
+            categoriesDataSource = CategoriesDataSource(viewModel: categoriesViewModel)
+            productsDataSource = ProductsDataSource(viewModel: viewModel)
+            shopsDataSource = ShopsDataSource(viewModel: shopViewModel)
+
+            categoriesContainerCell.configure(delegate: self, dataSource: categoriesDataSource) { [weak self] in
+                guard let self = self else { return }
+                let categoriesVC = CategoriesViewController()
+                self.navigationController?.pushViewController(categoriesVC, animated: true)
+            }
+
+            productsContainerCell.configure(delegate: self, dataSource: productsDataSource)
+
+            shopsContainerCell.configure(delegate: self, dataSource: self) { [weak self] in
+                guard let self = self else { return }
+                let shopViewController = ShopViewController()
+                self.navigationController?.pushViewController(shopViewController, animated: true)
+            }
+        }
+    
+    @objc private func profileButtonTapped() {
+        let viewModel = AuthorizationViewModel()
+
+        viewModel.fetchUserDetails { [weak self] name, email in
+            guard let self = self else { return }
+
+            let profileView = ProfileView(
+                userName: name,
+                userEmail: email,
+                signOutAction: {
+                    viewModel.signOut()
+                    self.dismiss(animated: true)
+                }
+            )
+
+            let hostingController = UIHostingController(rootView: profileView)
+            hostingController.modalPresentationStyle = .fullScreen
+            self.present(hostingController, animated: true)
+        }
     }
 
 

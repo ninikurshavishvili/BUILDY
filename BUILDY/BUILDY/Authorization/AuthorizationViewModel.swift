@@ -25,6 +25,30 @@ class AuthorizationViewModel {
         return Auth.auth().currentUser?.uid
     }
 
+    func fetchUserDetails(completion: @escaping (String, String) -> Void) {
+        guard let userID = userID else {
+            completion("Guest", "Not available")
+            return
+        }
+
+        db.collection("users").document(userID).getDocument { document, error in
+            if let error = error {
+                print("Error fetching user details: \(error.localizedDescription)")
+                completion("Unknown User", "Unknown Email")
+                return
+            }
+
+            guard let data = document?.data(),
+                  let name = data["name"] as? String,
+                  let email = data["email"] as? String else {
+                completion("Unknown User", "Unknown Email")
+                return
+            }
+
+            completion(name, email)
+        }
+    }
+
     func signInTapped() {
         onSignInRequested?()
     }

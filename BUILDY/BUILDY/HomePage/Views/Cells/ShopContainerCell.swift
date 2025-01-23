@@ -62,8 +62,8 @@ class ShopsContainerCell: UICollectionViewCell {
             seeAllButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
             shopsCollectionView.topAnchor.constraint(equalTo: shopsTitleLabel.bottomAnchor, constant: 8),
-            shopsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            shopsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            shopsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            shopsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             shopsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             shopsCollectionView.heightAnchor.constraint(equalToConstant: 120)
         ])
@@ -82,5 +82,6 @@ class ShopsContainerCell: UICollectionViewCell {
         onSeeAllTapped?()
     }
 }
+
 
 
