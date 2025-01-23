@@ -56,24 +56,10 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if let index = viewControllers?.firstIndex(of: viewController), index == 3 || index == 4 {
             if isGuestUser {
-                presentAuthorizationScreen()
+                AuthenticationManager.shared.navigateToAuthorization()
                 return false
             }
         }
         return true
     }
-
-    private func presentAuthorizationScreen() {
-        let authorizationVC = AuthorizationPage()
-        let navController = UINavigationController(rootViewController: authorizationVC)
-        navController.modalPresentationStyle = .fullScreen
-
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.rootViewController = navController
-            window.makeKeyAndVisible()
-        }
-    }
 }
-
-

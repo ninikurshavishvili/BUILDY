@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    let userName: String
-    let userEmail: String
+    @ObservedObject var profileManager = ProfileManager()
 
     var signOutAction: () -> Void
 
@@ -17,47 +16,54 @@ struct ProfileView: View {
         NavigationView {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
-                    Image(systemName: "person.circle")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.gray)
+                    if let image = profileManager.profileImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.circle")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .foregroundColor(.gray)
+                    }
+
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(userName)
+                        Text(profileManager.userName)
                             .font(.headline)
-                        Text(userEmail)
+                        Text(profileManager.userEmail)
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                     Spacer()
                 }
                 .padding()
+                .onAppear {
+                    profileManager.fetchUserProfile()
+                    profileManager.loadProfileImage()
+                }
 
-                Text("Account settings")
-                    .font(.title3)
-                    .bold()
-                    .padding(.horizontal)
+                Form {
+                    Section(header: Text("Personal Info")) {
+                        TextField("Name", text: $profileManager.userName)
+                        TextField("Email", text: $profileManager.userEmail)
+                            .disabled(true)
+                        TextField("Phone Number", text: $profileManager.userPhone)
+                        TextField("Address", text: $profileManager.userAddress)
+                    }
 
-                List {
-                    NavigationLink(destination: Text("My Account")) {
-                        Label("My account", systemImage: "doc.text")
+                    Section {
+                        Button("Save Changes") {
+                            profileManager.updateUserProfile()
+                        }
                     }
-                    NavigationLink(destination: Text("My Orders")) {
-                        Label("My orders", systemImage: "bag")
-                    }
-                    NavigationLink(destination: Text("Preferences")) {
-                        Label("Preferences", systemImage: "gear")
-                    }
-                    NavigationLink(destination: Text("Permissions")) {
-                        Label("Permissions", systemImage: "key")
-                    }
-                    NavigationLink(destination: Text("Support")) {
-                        Label("Support", systemImage: "person.2")
-                    }
-                    NavigationLink(destination: Text("Contact")) {
-                        Label("Contact", systemImage: "phone")
+
+                    Section {
+                        Button("Upload Profile Picture") {
+                            pickImage()
+                        }
                     }
                 }
-                .listStyle(.plain)
 
                 Spacer()
 
@@ -73,6 +79,27 @@ struct ProfileView: View {
                 .padding()
             }
             .navigationTitle("My Profile")
+            .navigationBarBackButtonHidden(true) 
+            .navigationBarItems(leading: Button(action: {
+
+                self.dismissToHome()
+            }) {
+                HStack {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.blue)
+                    Text("Back")
+                        .foregroundColor(.blue)
+                }
+            })
         }
     }
+    
+    private func pickImage() {
+    }
+    
+    private func dismissToHome() {
+        
+    }
 }
+
+

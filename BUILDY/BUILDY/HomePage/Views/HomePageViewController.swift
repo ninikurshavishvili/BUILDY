@@ -240,12 +240,17 @@ class HomePageViewController: UIViewController {
     @objc private func profileButtonTapped() {
         let viewModel = AuthorizationViewModel()
 
-        viewModel.fetchUserDetails { [weak self] name, email in
+        viewModel.fetchUserProfile { [weak self] (name: String, email: String, phone: String, address: String) in
             guard let self = self else { return }
 
+            let profileManager = ProfileManager()
+            profileManager.userName = name
+            profileManager.userEmail = email
+            profileManager.userPhone = phone
+            profileManager.userAddress = address
+            
             let profileView = ProfileView(
-                userName: name,
-                userEmail: email,
+                profileManager: profileManager,  
                 signOutAction: {
                     viewModel.signOut()
                     self.dismiss(animated: true)

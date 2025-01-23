@@ -8,6 +8,8 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import UIKit
+import SwiftUI
 
 class AuthorizationViewModel {
     var onSignInSuccess: ((User) -> Void)?
@@ -16,7 +18,7 @@ class AuthorizationViewModel {
     var onSignInRequested: (() -> Void)?
 
     private let db = Firestore.firestore()
-
+    
     var isGuest: Bool {
         return UserDefaults.standard.bool(forKey: "isGuest")
     }
@@ -24,30 +26,8 @@ class AuthorizationViewModel {
     var userID: String? {
         return Auth.auth().currentUser?.uid
     }
-
-    func fetchUserDetails(completion: @escaping (String, String) -> Void) {
-        guard let userID = userID else {
-            completion("Guest", "Not available")
-            return
-        }
-
-        db.collection("users").document(userID).getDocument { document, error in
-            if let error = error {
-                print("Error fetching user details: \(error.localizedDescription)")
-                completion("Unknown User", "Unknown Email")
-                return
-            }
-
-            guard let data = document?.data(),
-                  let name = data["name"] as? String,
-                  let email = data["email"] as? String else {
-                completion("Unknown User", "Unknown Email")
-                return
-            }
-
-            completion(name, email)
-        }
-    }
+    
+    // MARK: - Authentication Actions
 
     func signInTapped() {
         onSignInRequested?()
@@ -65,18 +45,14 @@ class AuthorizationViewModel {
 
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
             guard let self = self else { return }
-
             if let error = error {
                 self.onSignInFailure?(error.localizedDescription)
                 return
             }
 
-            guard let user = result?.user else {
-                self.onSignInFailure?("Unexpected error occurred.")
-                return
+            if let user = result?.user {
+                self.storeUserSession(user: user)
             }
-
-            self.storeUserSession(user: user)
         }
     }
 
@@ -88,21 +64,70 @@ class AuthorizationViewModel {
 
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             guard let self = self else { return }
-
             if let error = error {
                 self.onSignInFailure?(error.localizedDescription)
                 return
             }
 
-            guard let user = result?.user else { return }
-
-            self.storeUserSession(user: user)
+            if let user = result?.user {
+                self.storeUserSession(user: user)
+            }
         }
     }
+    
+    func fetchUserProfile(completion: @escaping (String, String, String, String) -> Void) {
+        guard let userID = userID else {
+            completion("Guest", "Not available", "No Phone", "No Address")
+            return
+        }
+
+        db.collection("users")
+            .document(userID)
+            .collection("userInfo")
+            .document("profile")
+            .getDocument { document, error in
+                if let error = error {
+                    print("Error fetching profile: \(error.localizedDescription)")
+                    completion("Unknown User", "Unknown Email", "Unknown Phone", "Unknown Address")
+                    return
+                }
+
+                guard let data = document?.data(),
+                      let name = data["name"] as? String,
+                      let email = data["email"] as? String,
+                      let phone = data["phoneNumber"] as? String,
+                      let address = data["address"] as? String else {
+                    completion("Unknown User", "Unknown Email", "Unknown Phone", "Unknown Address")
+                    return
+                }
+
+                completion(name, email, phone, address)
+            }
+    }
+
 
     private func storeUserSession(user: User) {
         UserDefaults.standard.set(user.uid, forKey: "userUID")
         UserDefaults.standard.set(false, forKey: "isGuest")
+
+        let userInfo: [String: Any] = [
+            "name": user.displayName ?? "Unknown",
+            "email": user.email ?? "No Email",
+            "phoneNumber": user.phoneNumber ?? "No Phone",
+            "address": "No Address"
+        ]
+
+        db.collection("users")
+            .document(user.uid)
+            .collection("userInfo")
+            .document("profile")
+            .setData(userInfo) { error in
+                if let error = error {
+                    print("Error saving user info: \(error.localizedDescription)")
+                } else {
+                    print("User info saved successfully.")
+                }
+            }
 
         CartManager.shared.fetchCartFromFirestore()
         WishlistManager.shared.fetchWishlistFromFirestore()
@@ -117,16 +142,18 @@ class AuthorizationViewModel {
 
     func signOut() {
         do {
-            try Auth.auth().signOut()
+            try Auth.auth().signOut()  
             UserDefaults.standard.removeObject(forKey: "userUID")
             UserDefaults.standard.set(true, forKey: "isGuest")
-
             CartManager.shared.clearCart()
-            
+
+            AuthenticationManager.shared.navigateToAuthorization()
+
         } catch {
             print("Error signing out: \(error.localizedDescription)")
         }
     }
+
 
     func restoreSession() {
         if let user = Auth.auth().currentUser {
