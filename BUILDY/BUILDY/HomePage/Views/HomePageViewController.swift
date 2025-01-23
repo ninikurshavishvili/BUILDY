@@ -240,6 +240,11 @@ class HomePageViewController: UIViewController {
     @objc private func profileButtonTapped() {
         let viewModel = AuthorizationViewModel()
 
+        if viewModel.isGuest {
+            AuthenticationManager.shared.navigateToAuthorization()
+            return
+        }
+
         viewModel.fetchUserProfile { [weak self] (name: String, email: String, phone: String, address: String) in
             guard let self = self else { return }
 
@@ -250,7 +255,7 @@ class HomePageViewController: UIViewController {
             profileManager.userAddress = address
             
             let profileView = ProfileView(
-                profileManager: profileManager,  
+                profileManager: profileManager,
                 signOutAction: {
                     viewModel.signOut()
                     self.dismiss(animated: true)

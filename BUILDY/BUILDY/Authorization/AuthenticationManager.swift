@@ -22,6 +22,7 @@ class AuthenticationManager {
             CartManager.shared.clearCart()
 
             navigateToAuthorization()
+            print("SIGN OUT TAPPED 🟣🟣from AuthenticationManager 🟣")
         } catch {
             print("Error signing out: \(error.localizedDescription)")
         }

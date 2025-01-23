@@ -110,30 +110,38 @@ class AuthorizationViewModel {
         UserDefaults.standard.set(user.uid, forKey: "userUID")
         UserDefaults.standard.set(false, forKey: "isGuest")
 
-        let userInfo: [String: Any] = [
-            "name": user.displayName ?? "Unknown",
-            "email": user.email ?? "No Email",
-            "phoneNumber": user.phoneNumber ?? "No Phone",
-            "address": "No Address"
-        ]
-
-        db.collection("users")
+        let userDocRef = db.collection("users")
             .document(user.uid)
             .collection("userInfo")
             .document("profile")
-            .setData(userInfo) { error in
-                if let error = error {
-                    print("Error saving user info: \(error.localizedDescription)")
-                } else {
-                    print("User info saved successfully.")
+
+        userDocRef.getDocument { document, error in
+            if let document = document, document.exists {
+                print("User profile already exists. Skipping default data save.")
+            } else {
+                let userInfo: [String: Any] = [
+                    "name": user.displayName ?? "Unknown",
+                    "email": user.email ?? "No Email",
+                    "phoneNumber": user.phoneNumber ?? "No Phone",
+                    "address": "No Address"
+                ]
+
+                userDocRef.setData(userInfo, merge: true) { error in
+                    if let error = error {
+                        print("Error saving user info: \(error.localizedDescription)")
+                    } else {
+                        print("User info saved successfully.")
+                    }
                 }
             }
+        }
 
         CartManager.shared.fetchCartFromFirestore()
         WishlistManager.shared.fetchWishlistFromFirestore()
 
         onSignInSuccess?(user)
     }
+
 
     func enterAsGuest() {
         UserDefaults.standard.set(true, forKey: "isGuest")
@@ -146,6 +154,7 @@ class AuthorizationViewModel {
             UserDefaults.standard.removeObject(forKey: "userUID")
             UserDefaults.standard.set(true, forKey: "isGuest")
             CartManager.shared.clearCart()
+            print("sign out tapped from Authorisation VM ↖️↖️")
 
             AuthenticationManager.shared.navigateToAuthorization()
 

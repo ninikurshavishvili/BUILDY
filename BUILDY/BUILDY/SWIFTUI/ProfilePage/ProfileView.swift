@@ -79,9 +79,8 @@ struct ProfileView: View {
                 .padding()
             }
             .navigationTitle("My Profile")
-            .navigationBarBackButtonHidden(true) 
+            .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: Button(action: {
-
                 self.dismissToHome()
             }) {
                 HStack {
@@ -95,10 +94,19 @@ struct ProfileView: View {
     }
     
     private func pickImage() {
+
     }
     
-    private func dismissToHome() {
-        
+    func dismissToHome() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+
+            let homePageVC = MainTabBarController()
+            let navController = UINavigationController(rootViewController: homePageVC)
+            navController.modalPresentationStyle = .fullScreen
+            window.rootViewController = navController
+            window.makeKeyAndVisible()
+        }
     }
 }
 
