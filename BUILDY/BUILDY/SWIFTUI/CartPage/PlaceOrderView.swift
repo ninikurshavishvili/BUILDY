@@ -69,20 +69,28 @@ struct PlaceOrderView: View {
             .shadow(radius: 2)
             .padding(.horizontal)
 
-            VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Image(systemName: "creditcard.fill")
-                        .foregroundColor(.gray)
-                    Text("Payment method")
-                        .font(.headline)
-                    Spacer()
-                    Image(systemName: "chevron.right")
+            NavigationLink(destination: PaymentMethodView()) {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Image(systemName: "creditcard.fill")
+                            .foregroundColor(.gray)
+                        Text("Payment method")
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray)
+                    }
+                    Text(paymentMethod)
+                        .font(.subheadline)
                         .foregroundColor(.gray)
                 }
-                Text(paymentMethod)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
             }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(10)
+            .shadow(radius: 2)
+            .padding(.horizontal)
+
             .padding()
             .background(Color.white)
             .cornerRadius(10)

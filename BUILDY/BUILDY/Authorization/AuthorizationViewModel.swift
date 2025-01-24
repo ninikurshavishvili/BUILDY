@@ -8,6 +8,8 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleSignIn
+import FirebaseCore
 import UIKit
 import SwiftUI
 
@@ -171,7 +173,65 @@ class AuthorizationViewModel {
             enterAsGuest()
         }
     }
+    
+    func signInWithGoogle() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            onSignInFailure?("Google Sign-In failed: No client ID found.")
+            return
+        }
+    
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+    
+        guard let topVC = UIApplication.getTopViewController() else {
+            onSignInFailure?("Google Sign-In failed: Unable to get top view controller.")
+            return
+        }
+    
+        GIDSignIn.sharedInstance.signIn(withPresenting: topVC) { [weak self] result, error in
+            guard let self = self, let user = result?.user, let idToken = user.idToken?.tokenString else {
+                self?.onSignInFailure?("Google Sign-In failed: Unable to sign in.")
+                return
+            }
+    
+            let accessToken = user.accessToken.tokenString
+    
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+    
+            Auth.auth().signIn(with: credential) { result, error in
+                if let error = error {
+                    self.onSignInFailure?("Google Sign-In failed: \(error.localizedDescription)")
+                    return
+                }
+    
+                if let user = result?.user {
+                    self.storeUserSession(user: user)
+                }
+            }
+        }
+    }
 }
+
+extension UIApplication {
+    static func getTopViewController(base: UIViewController? =
+        UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first?.rootViewController) -> UIViewController? {
+        
+        if let nav = base as? UINavigationController {
+            return getTopViewController(base: nav.visibleViewController)
+        }
+        if let tab = base as? UITabBarController {
+            return getTopViewController(base: tab.selectedViewController)
+        }
+        if let presented = base?.presentedViewController {
+            return getTopViewController(base: presented)
+        }
+        return base
+    }
+}
+
+
+
 
 
 

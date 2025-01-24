@@ -122,6 +122,7 @@ class SignInViewController: UIViewController {
         view.addSubview(socialSignInLabel)
         view.addSubview(socialStackView)
         view.addSubview(termsLabel)
+        
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
@@ -157,6 +158,11 @@ class SignInViewController: UIViewController {
         ])
 
         signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
+
+        if let googleButton = socialStackView.arrangedSubviews.last as? UIButton {
+            googleButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
+        }
+
     }
     
     private func setupBindings() {
@@ -184,6 +190,11 @@ class SignInViewController: UIViewController {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
         viewModel.signIn(email: email, password: password)
     }
+    
+    @objc private func googleSignInTapped() {
+        viewModel.signInWithGoogle()
+    }
+
 }
 
 
