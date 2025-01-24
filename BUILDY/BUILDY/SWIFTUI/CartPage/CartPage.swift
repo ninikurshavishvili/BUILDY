@@ -39,7 +39,7 @@ struct CartPage: View {
                         .fontWeight(.bold)
                     Spacer()
                     NavigationLink(
-                        destination: PlaceOrderView(cartItems: cartManager.cartItems),
+                        destination: AddPaymentView(),
                         label: {
                             Text("Checkout")
                                 .font(.headline)

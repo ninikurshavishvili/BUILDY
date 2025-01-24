@@ -9,77 +9,111 @@
 import SwiftUI
 
 struct PaymentMethodView: View {
-    @Environment(\.presentationMode) var presentationMode
-    @State private var cardNumber: String = ""
-    @State private var cardHolderName: String = ""
-    @State private var expiryDate: String = ""
-    @State private var cvv: String = ""
-
+    @StateObject private var cardManager = AddCardManager()
+    @State private var showPaymentConfirmation = false
+    @State private var navigateToDeliveryStatus = false
+    
     var body: some View {
         VStack(spacing: 20) {
             HStack {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.black)
-                        .padding()
-                        .background(Color.white)
-                        .clipShape(Circle())
-                }
+                Image(systemName: "cart.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .padding()
+                
                 Spacer()
-                Text("Add Payment Method")
-                    .font(.headline)
-                Spacer()
+                
+                Text("Total: 0.00 ₾")
+                    .font(.title3)
+                    .bold()
             }
             .padding()
-
-            TextField("Card Number", text: $cardNumber)
-                .keyboardType(.numberPad)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
-
-            TextField("Cardholder Name", text: $cardHolderName)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
-
-            HStack {
-                TextField("Expiry Date (MM/YY)", text: $expiryDate)
-                    .keyboardType(.numberPad)
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
-
-                TextField("CVV", text: $cvv)
-                    .keyboardType(.numberPad)
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
-                    .frame(width: 100)
-            }
-
-            Button(action: {
-                savePaymentMethod()
-            }) {
-                Text("Save Card")
+            
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Payment Details")
                     .font(.headline)
+                    .padding(.leading)
+                
+                HStack {
+                    TextField("Card Number", text: $cardManager.cardNumber)
+                        .keyboardType(.numberPad)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                        .frame(maxWidth: .infinity)
+                    
+                    Image("visa_logo")
+                        .resizable()
+                        .frame(width: 40, height: 25)
+                }
+                
+                HStack {
+                    TextField("MM/YY", text: $cardManager.expiryDate)
+                        .keyboardType(.numberPad)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                        .frame(maxWidth: .infinity)
+                    
+                    TextField("CVV", text: $cardManager.cvv)
+                        .keyboardType(.numberPad)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                        .frame(width: 80)
+                }
+            }
+            .padding(.horizontal)
+            
+            Button(action: {
+                cardManager.saveUserCard()
+            }) {
+                Text("Save Card (0.00 ₾)")
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.blue)
+                    .background(Color.orange)
                     .cornerRadius(10)
             }
-
+            .padding(.horizontal)
+            
+            Button(action: {
+                showPaymentConfirmation = true
+            }) {
+                Text("Confirm & Pay")
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green)
+                    .cornerRadius(10)
+            }
+            .padding(.horizontal)
+            .alert(isPresented: $showPaymentConfirmation) {
+                Alert(
+                    title: Text("Payment Confirmed"),
+                    message: Text("Your payment has been successfully processed."),
+                    dismissButton: .default(Text("OK"), action: {
+                        navigateToDeliveryStatus = true
+                    })
+                )
+            }
+            
+            NavigationLink(
+                destination: DeliveryStatusView(),
+                isActive: $navigateToDeliveryStatus,
+                label: { EmptyView() }
+            )
+            
             Spacer()
+            
+            Text("Data transfer over the internet is secured by TLS.")
+                .font(.footnote)
+                .foregroundColor(.gray)
+                .padding()
         }
-        .padding()
-        .background(Color.gray.opacity(0.1).ignoresSafeArea())
-    }
-
-    private func savePaymentMethod() {
-        print("Card Saved: \(cardNumber)")
-        presentationMode.wrappedValue.dismiss()
+        .padding(.vertical)
+        .onAppear {
+            cardManager.fetchUserCard()
+        }
     }
 }
