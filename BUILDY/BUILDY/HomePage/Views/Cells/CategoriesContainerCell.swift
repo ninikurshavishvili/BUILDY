@@ -14,7 +14,8 @@ class CategoriesContainerCell: UICollectionViewCell {
     private let categoriesTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Categories"
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        label.textColor = AppColors.categoriesTitleColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -22,8 +23,8 @@ class CategoriesContainerCell: UICollectionViewCell {
     private let seeAllCategories: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("See All", for: .normal)
-        button.setTitleColor(.systemOrange, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(AppColors.seeAllButtonColor, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -61,9 +62,9 @@ class CategoriesContainerCell: UICollectionViewCell {
             seeAllCategories.centerYAnchor.constraint(equalTo: categoriesTitleLabel.centerYAnchor),
             seeAllCategories.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
-            categoriesCollectionView.topAnchor.constraint(equalTo: categoriesTitleLabel.bottomAnchor, constant: 8),
-            categoriesCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            categoriesCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            categoriesCollectionView.topAnchor.constraint(equalTo: categoriesTitleLabel.bottomAnchor, constant: 16),
+            categoriesCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            categoriesCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoriesCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             categoriesCollectionView.heightAnchor.constraint(equalToConstant: 120)
         ])

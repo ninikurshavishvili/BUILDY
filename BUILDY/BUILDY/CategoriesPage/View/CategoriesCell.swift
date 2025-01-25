@@ -22,8 +22,8 @@ class CategoriesCell: UICollectionViewCell {
     
     private let categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textAlignment = .left
         label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -31,13 +31,11 @@ class CategoriesCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .white
-        contentView.layer.cornerRadius = 10
-        contentView.layer.masksToBounds = false
-        contentView.layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
-        contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        contentView.layer.shadowOpacity = 0.5
-        contentView.layer.shadowRadius = 4
+        contentView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
+        contentView.layer.cornerRadius = 16
+        contentView.layer.masksToBounds = true
+        
+        setupShadow()
         setupViews()
     }
 
@@ -46,13 +44,21 @@ class CategoriesCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupShadow() {
+        contentView.layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
+        contentView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        contentView.layer.shadowOpacity = 0.3
+        contentView.layer.shadowRadius = 8
+        contentView.layer.masksToBounds = false
+    }
+    
     private func setupViews() {
         contentView.addSubview(categoryImageView)
         contentView.addSubview(categoryLabel)
         
         NSLayoutConstraint.activate([
-            categoryImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            categoryImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            categoryImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            categoryImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             categoryImageView.heightAnchor.constraint(equalToConstant: 60),
             categoryImageView.widthAnchor.constraint(equalToConstant: 60),
             
@@ -66,7 +72,6 @@ class CategoriesCell: UICollectionViewCell {
     func configure(with category: Category) {
         categoryLabel.text = category.name
         if let imageURL = category.imageURL, let url = URL(string: imageURL) {
-
             URLSession.shared.dataTask(with: url) { data, _, error in
                 guard let data = data, error == nil, let image = UIImage(data: data) else { return }
                 DispatchQueue.main.async {
@@ -78,3 +83,4 @@ class CategoriesCell: UICollectionViewCell {
         }
     }
 }
+

@@ -61,7 +61,8 @@ class HomePageViewController: UIViewController {
     private func configureTopBarView() {
         topBarView.axis = .horizontal
         topBarView.alignment = .center
-        topBarView.distribution = .equalSpacing
+        topBarView.distribution = .fill
+        topBarView.spacing = 0
         topBarView.translatesAutoresizingMaskIntoConstraints = false
         
         logoImageView.image = UIImage(named: "BUILDY_LOGO")
@@ -73,9 +74,12 @@ class HomePageViewController: UIViewController {
         profileButton.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
         
         topBarView.addArrangedSubview(logoImageView)
+        topBarView.addArrangedSubview(UIView())
         topBarView.addArrangedSubview(profileButton)
+        
         view.addSubview(topBarView)
     }
+
     
     private func configureScrollView() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -89,7 +93,24 @@ class HomePageViewController: UIViewController {
     }
     
     private func configureSearchBar() {
-        searchBar.placeholder = "მოძებნე"
+        searchBar.placeholder = "Search"
+        searchBar.searchBarStyle = .prominent
+        
+        let textField = searchBar.searchTextField
+        textField.backgroundColor = .clear
+        textField.layer.cornerRadius = 8
+        textField.layer.masksToBounds = true
+        
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.lightGray,
+            .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "Search", attributes: placeholderAttributes)
+        
+        textField.leftView?.tintColor = .gray
+        textField.clearButtonMode = .whileEditing
+        textField.textAlignment = .left
+        
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(searchBar)
     }
@@ -131,15 +152,15 @@ class HomePageViewController: UIViewController {
     private func setupTopBarViewConstraints() {
         NSLayoutConstraint.activate([
             topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            topBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            topBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             topBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             topBarView.heightAnchor.constraint(equalToConstant: 50),
             
-            logoImageView.heightAnchor.constraint(equalToConstant: 40),
-            logoImageView.widthAnchor.constraint(equalToConstant: 120),
+            logoImageView.heightAnchor.constraint(equalToConstant: 70),
+            logoImageView.widthAnchor.constraint(equalToConstant: 190),
             
-            profileButton.heightAnchor.constraint(equalToConstant: 40),
-            profileButton.widthAnchor.constraint(equalToConstant: 40)
+            profileButton.heightAnchor.constraint(equalToConstant: 30),
+            profileButton.widthAnchor.constraint(equalToConstant: 30)
         ])
     }
 
@@ -164,7 +185,7 @@ class HomePageViewController: UIViewController {
 
     private func setupSearchBarConstraints() {
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            searchBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             searchBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             searchBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
@@ -172,7 +193,7 @@ class HomePageViewController: UIViewController {
 
     private func setupCategoriesContainerConstraints() {
         NSLayoutConstraint.activate([
-            categoriesContainerCell.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
+            categoriesContainerCell.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
             categoriesContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             categoriesContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             categoriesContainerCell.heightAnchor.constraint(equalToConstant: 160)
@@ -181,7 +202,7 @@ class HomePageViewController: UIViewController {
 
     private func setupProductCarouselConstraints() {
         NSLayoutConstraint.activate([
-            productCarouselCell.topAnchor.constraint(equalTo: categoriesContainerCell.bottomAnchor, constant: 16),
+            productCarouselCell.topAnchor.constraint(equalTo: categoriesContainerCell.bottomAnchor, constant: 24),
             productCarouselCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             productCarouselCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             productCarouselCell.heightAnchor.constraint(equalToConstant: 300)
@@ -190,7 +211,7 @@ class HomePageViewController: UIViewController {
 
     private func setupShopsContainerConstraints() {
         NSLayoutConstraint.activate([
-            shopsContainerCell.topAnchor.constraint(equalTo: productCarouselCell.bottomAnchor, constant: 16),
+            shopsContainerCell.topAnchor.constraint(equalTo: productCarouselCell.bottomAnchor, constant: 24),
             shopsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             shopsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             shopsContainerCell.heightAnchor.constraint(equalToConstant: 160)
@@ -199,7 +220,7 @@ class HomePageViewController: UIViewController {
 
     private func setupAddViewConstraints() {
         NSLayoutConstraint.activate([
-            addViewCell.topAnchor.constraint(equalTo: shopsContainerCell.bottomAnchor, constant: 16),
+            addViewCell.topAnchor.constraint(equalTo: shopsContainerCell.bottomAnchor, constant: 24),
             addViewCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             addViewCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             addViewCell.heightAnchor.constraint(equalToConstant: 300)
@@ -208,11 +229,11 @@ class HomePageViewController: UIViewController {
 
     private func setupProductsContainerConstraints() {
         NSLayoutConstraint.activate([
-            productsContainerCell.topAnchor.constraint(equalTo: addViewCell.bottomAnchor, constant: 16),
+            productsContainerCell.topAnchor.constraint(equalTo: addViewCell.bottomAnchor, constant: 24),
             productsContainerCell.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             productsContainerCell.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             productsContainerCell.heightAnchor.constraint(equalToConstant: 250),
-            productsContainerCell.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            productsContainerCell.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
 
     }
@@ -292,6 +313,16 @@ class HomePageViewController: UIViewController {
             }
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
 
 }
 
@@ -336,7 +367,7 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == categoriesContainerCell.categoriesCollectionView {
-            return CGSize(width: 100, height: 120)
+            return CGSize(width: 200, height: 120)
         } else if collectionView == productsContainerCell.productsCollectionView {
             return CGSize(width: 200, height: 250)
         } else if collectionView == shopsContainerCell.shopsCollectionView {

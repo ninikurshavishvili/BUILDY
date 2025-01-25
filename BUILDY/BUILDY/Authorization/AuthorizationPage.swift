@@ -16,7 +16,7 @@ class AuthorizationPage: UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "logo")
+        imageView.image = UIImage(named: "BUILDY_LOGO")
         return imageView
     }()
 

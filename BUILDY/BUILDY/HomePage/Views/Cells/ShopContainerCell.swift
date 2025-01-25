@@ -14,7 +14,8 @@ class ShopsContainerCell: UICollectionViewCell {
     private let shopsTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Shops"
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        label.textColor = AppColors.categoriesTitleColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -22,8 +23,8 @@ class ShopsContainerCell: UICollectionViewCell {
     private let seeAllButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("See All", for: .normal)
-        button.setTitleColor(.systemOrange, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(AppColors.seeAllButtonColor, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
