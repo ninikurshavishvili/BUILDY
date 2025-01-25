@@ -39,39 +39,43 @@ class HomePageViewModel {
 
         for supplier in suppliers {
             fetchGroup.enter()
-            firebaseService.fetchData(from: "1iiGe9MNfRWe7I5ZC78qQtdLydxHxK4Umlx3vce8yxYU/\(supplier)") { result in
-                switch result {
-                case .success(let productsData):
-                    print("Fetched \(productsData.count) products for supplier \(supplier)")
-                    let supplierProducts = productsData.compactMap { _, productData -> Product? in
-                        guard let productInfo = productData as? [String: Any] else { return nil }
-                        
-                        let supplierName = productInfo["მომწოდებელი"] as? String
-                        let name = productInfo["დასახელება"] as? String
-                        let price = productInfo["გასაყიდი ფასი"] as? String
-                        let unit = productInfo["ერთეული"] as? String
-                        let featuresGeo = productInfo["მახასიათებლები GEO"] as? String
-                        let category = productInfo["კატეგორია"] as? String
-                        let link = productInfo["Links"] as? String
-                        let codeID = productInfo["საძიებო კოდი"] as? String
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.firebaseService.fetchData(from: "1iiGe9MNfRWe7I5ZC78qQtdLydxHxK4Umlx3vce8yxYU/\(supplier)") { result in
+                    switch result {
+                    case .success(let productsData):
+                        print("Fetched \(productsData.count) products for supplier \(supplier)")
+                        let supplierProducts = productsData.compactMap { _, productData -> Product? in
+                            guard let productInfo = productData as? [String: Any] else { return nil }
+                            
+                            let supplierName = productInfo["მომწოდებელი"] as? String
+                            let name = productInfo["დასახელება"] as? String
+                            let price = productInfo["გასაყიდი ფასი"] as? String
+                            let unit = productInfo["ერთეული"] as? String
+                            let featuresGeo = productInfo["მახასიათებლები GEO"] as? String
+                            let category = productInfo["კატეგორია"] as? String
+                            let link = productInfo["Links"] as? String
+                            let codeID = productInfo["საძიებო კოდი"] as? String
 
-                        return Product(
-                            name: name ?? "Unknown",
-                            price: price ?? "0",
-                            codeID: codeID ?? "Unknown",
-                            unit: unit ?? "",
-                            featuresGeo: featuresGeo ?? "",
-                            category: category ?? "Unknown",
-                            link: link ?? "",
-                            imageURL: nil,
-                            supplier: supplierName ?? "Unknown"
-                        )
+                            return Product(
+                                name: name ?? "Unknown",
+                                price: price ?? "0",
+                                codeID: codeID ?? "Unknown",
+                                unit: unit ?? "",
+                                featuresGeo: featuresGeo ?? "",
+                                category: category ?? "Unknown",
+                                link: link ?? "",
+                                imageURL: nil,
+                                supplier: supplierName ?? "Unknown"
+                            )
+                        }
+                        DispatchQueue.global(qos: .utility).async(flags: .barrier) {
+                            allProducts.append(contentsOf: supplierProducts)
+                        }
+                    case .failure(let error):
+                        print("Failed to fetch products for supplier \(supplier): \(error.localizedDescription)")
                     }
-                    allProducts.append(contentsOf: supplierProducts)
-                case .failure(let error):
-                    print("Failed to fetch products for supplier \(supplier): \(error.localizedDescription)")
+                    fetchGroup.leave()
                 }
-                fetchGroup.leave()
             }
         }
 
@@ -94,10 +98,11 @@ class HomePageViewModel {
             guard let urlString = product.link, let url = URL(string: urlString) else { continue }
 
             imageFetchGroup.enter()
-            
-            imageFetcher.fetchImage(from: url) { image in
-                updatedProducts[index].imageURL = image
-                imageFetchGroup.leave()
+            DispatchQueue.global(qos: .background).async {
+                self.imageFetcher.fetchImage(from: url) { image in
+                    updatedProducts[index].imageURL = image
+                    imageFetchGroup.leave()
+                }
             }
         }
         
@@ -107,6 +112,7 @@ class HomePageViewModel {
         }
     }
 }
+
 
 
 

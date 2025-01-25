@@ -15,7 +15,7 @@ class CategoriesContainerCell: UICollectionViewCell {
         let label = UILabel()
         label.text = "Categories"
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-        label.textColor = AppColors.categoriesTitleColor
+        label.textColor = AppColors.titleColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -23,7 +23,7 @@ class CategoriesContainerCell: UICollectionViewCell {
     private let seeAllCategories: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("See All", for: .normal)
-        button.setTitleColor(AppColors.seeAllButtonColor, for: .normal)
+        button.setTitleColor(AppColors.customOrange, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

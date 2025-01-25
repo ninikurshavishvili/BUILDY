@@ -16,43 +16,50 @@ class CategoriesViewModel {
     func fetchCategories() {
         let storageRef = storage.reference().child("CategoriesImages")
         
-        storageRef.listAll { [weak self] result, error in
-            guard let self = self else { return }
-            
-            if let error = error {
-                print("Error listing category images: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let result = result else {
-                print("Failed to fetch result from Firebase Storage.")
-                return
-            }
-            
-            self.categories.removeAll()
-            
-            let dispatchGroup = DispatchGroup()
-            
-            for item in result.items {
-                dispatchGroup.enter()
+        DispatchQueue.global(qos: .userInitiated).async {
+            storageRef.listAll { [weak self] result, error in
+                guard let self = self else { return }
                 
-                let fileName = item.name
-                let categoryName = fileName.replacingOccurrences(of: ".png", with: "")
-                
-                item.downloadURL { url, error in
-                    if let url = url {
-                        let category = Category(name: categoryName, imageURL: url.absoluteString)
-                        self.categories.append(category)
-                    } else {
-                        print("Failed to fetch URL for \(fileName): \(error?.localizedDescription ?? "Unknown error")")
-                    }
-                    dispatchGroup.leave()
+                if let error = error {
+                    print("Error listing category images: \(error.localizedDescription)")
+                    return
                 }
-            }
-            
-            dispatchGroup.notify(queue: .main) {
-                self.onCategoriesFetched?()
+                
+                guard let result = result else {
+                    print("Failed to fetch result from Firebase Storage.")
+                    return
+                }
+                
+                var fetchedCategories: [Category] = []
+                let dispatchGroup = DispatchGroup()
+                
+                for item in result.items {
+                    dispatchGroup.enter()
+                    
+                    let fileName = item.name
+                    let categoryName = fileName.replacingOccurrences(of: ".png", with: "")
+                    
+                    item.downloadURL { url, error in
+                        if let url = url {
+                            let category = Category(name: categoryName, imageURL: url.absoluteString)
+                            fetchedCategories.append(category)
+                        } else {
+                            print("Failed to fetch URL for \(fileName): \(error?.localizedDescription ?? "Unknown error")")
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+                
+                dispatchGroup.notify(queue: DispatchQueue.global(qos: .userInitiated)) {
+                    fetchedCategories.sort { $0.name < $1.name }
+                    
+                    DispatchQueue.main.async {
+                        self.categories = fetchedCategories
+                        self.onCategoriesFetched?()
+                    }
+                }
             }
         }
     }
 }
+

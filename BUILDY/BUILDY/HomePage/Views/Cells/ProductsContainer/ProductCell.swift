@@ -41,7 +41,7 @@ class ProductCell: UICollectionViewCell {
     let priceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.textColor = UIColor.systemBlue
+        label.textColor = AppColors.customOrange
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
