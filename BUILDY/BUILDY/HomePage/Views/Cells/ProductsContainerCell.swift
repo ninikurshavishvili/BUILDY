@@ -9,12 +9,22 @@
 import UIKit
 
 class ProductsContainerCell: UICollectionViewCell {
-    
+
     static let reuseIdentifier = "ProductsContainerCell"
+
+    private let productTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Top Products"
+        label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        label.textColor = UIColor.darkGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     let productsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 16
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.showsHorizontalScrollIndicator = false
@@ -31,13 +41,19 @@ class ProductsContainerCell: UICollectionViewCell {
     }
 
     private func setupUI() {
+        contentView.addSubview(productTitleLabel)
         contentView.addSubview(productsCollectionView)
 
         NSLayoutConstraint.activate([
-            productsCollectionView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            productsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            productsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            productTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            productTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            productTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            productsCollectionView.topAnchor.constraint(equalTo: productTitleLabel.bottomAnchor, constant: 30),
+            productsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            productsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 16),
             productsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            
         ])
     }
 

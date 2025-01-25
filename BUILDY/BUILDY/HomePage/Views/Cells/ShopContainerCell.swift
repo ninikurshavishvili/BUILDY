@@ -13,7 +13,7 @@ class ShopsContainerCell: UICollectionViewCell {
 
     private let shopsTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Shops"
+        label.text = "Supliers"
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         label.textColor = AppColors.categoriesTitleColor
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +62,7 @@ class ShopsContainerCell: UICollectionViewCell {
             seeAllButton.centerYAnchor.constraint(equalTo: shopsTitleLabel.centerYAnchor),
             seeAllButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
-            shopsCollectionView.topAnchor.constraint(equalTo: shopsTitleLabel.bottomAnchor, constant: 8),
+            shopsCollectionView.topAnchor.constraint(equalTo: shopsTitleLabel.bottomAnchor, constant: 16),
             shopsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             shopsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             shopsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

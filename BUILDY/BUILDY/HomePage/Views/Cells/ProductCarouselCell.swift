@@ -144,3 +144,10 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
     }
 }
 
+extension ProductCell {
+    func configure(with product: Product) {
+        productImageView.image = product.imageURL
+        nameLabel.text = product.name
+        priceLabel.text = "\(product.price) ₾"
+    }
+}

@@ -369,7 +369,7 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
         if collectionView == categoriesContainerCell.categoriesCollectionView {
             return CGSize(width: 200, height: 120)
         } else if collectionView == productsContainerCell.productsCollectionView {
-            return CGSize(width: 200, height: 250)
+            return CGSize(width: 150, height: 180)
         } else if collectionView == shopsContainerCell.shopsCollectionView {
             return CGSize(width: 100, height: 100)
         }
