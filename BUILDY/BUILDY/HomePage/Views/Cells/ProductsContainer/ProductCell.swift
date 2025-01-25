@@ -74,12 +74,10 @@ class ProductCell: UICollectionViewCell {
             blurContainerView.bottomAnchor.constraint(equalTo: productImageView.bottomAnchor),
             blurContainerView.heightAnchor.constraint(equalToConstant: 60),
 
-            // Name label
             nameLabel.topAnchor.constraint(equalTo: blurContainerView.topAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: blurContainerView.leadingAnchor, constant: 8),
             nameLabel.trailingAnchor.constraint(equalTo: blurContainerView.trailingAnchor, constant: -8),
 
-            // Price label
             priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             priceLabel.leadingAnchor.constraint(equalTo: blurContainerView.leadingAnchor, constant: 8),
             priceLabel.trailingAnchor.constraint(equalTo: blurContainerView.trailingAnchor, constant: -8),

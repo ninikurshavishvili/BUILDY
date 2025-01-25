@@ -9,6 +9,30 @@ import UIKit
 
 class CategoryDetailViewController: UIViewController {
     
+    private let searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "Search"
+        searchBar.searchBarStyle = .prominent
+        
+        let textField = searchBar.searchTextField
+        textField.backgroundColor = .clear
+        textField.layer.cornerRadius = 8
+        textField.layer.masksToBounds = true
+        
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.lightGray,
+            .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "Search", attributes: placeholderAttributes)
+        
+        textField.leftView?.tintColor = .gray
+        textField.clearButtonMode = .whileEditing
+        textField.textAlignment = .left
+        
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        return searchBar
+    }()
+    
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2 - 24, height: 180)
@@ -36,10 +60,26 @@ class CategoryDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Products"
-        view.backgroundColor = .systemGroupedBackground
-        
+        setupNavigationBar()
+        view.backgroundColor = .white
         setupCollectionView()
+    }
+    
+    private func setupNavigationBar() {
+        let backButton = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapBackButton)
+        )
+        backButton.tintColor = .black
+        
+        navigationItem.leftBarButtonItem = backButton
+        navigationItem.titleView = searchBar
+    }
+
+    @objc private func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
     }
     
     private func setupCollectionView() {
