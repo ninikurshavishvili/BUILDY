@@ -58,11 +58,14 @@ class CategoryDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let viewModel = CategoryDetailViewModel()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
         view.backgroundColor = .white
         setupCollectionView()
+        searchBar.delegate = self
     }
     
     private func setupNavigationBar() {
@@ -85,19 +88,25 @@ class CategoryDetailViewController: UIViewController {
     private func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.alwaysBounceVertical = true
+        collectionView.backgroundColor = .white
+        
         collectionView.register(ProductCategoryCell.self, forCellWithReuseIdentifier: ProductCategoryCell.identifier)
+
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+
     
     func configure(with products: [Product]) {
-        self.products = products
+        viewModel.configure(with: products)
+        self.products = viewModel.products
         collectionView.reloadData()
     }
 }
@@ -122,4 +131,12 @@ extension CategoryDetailViewController: UICollectionViewDataSource, UICollection
     }
 }
 
+
+extension CategoryDetailViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.searchProducts(with: searchText)
+        products = viewModel.products
+        collectionView.reloadData()
+    }
+}
 
