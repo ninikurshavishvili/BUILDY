@@ -8,89 +8,23 @@
 import UIKit
 import FirebaseAuth
 
-class SignInViewController: UIViewController {
+final class SignInViewController: UIViewController {
 
     private let viewModel = AuthorizationViewModel()
 
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Sign In"
-        label.font = UIFont.boldSystemFont(ofSize: 30)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Welcome back!"
-        label.font = UIFont.systemFont(ofSize: 18)
-        label.textColor = .gray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let emailTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Email or Phone Number"
-        textField.borderStyle = .roundedRect
-        textField.autocapitalizationType = .none
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.orange.cgColor
-        textField.layer.cornerRadius = 16
-        textField.leftViewMode = .always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
-        return textField
-    }()
-
-    private let passwordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
-        textField.borderStyle = .roundedRect
-        textField.isSecureTextEntry = true
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.orange.cgColor
-        textField.layer.cornerRadius = 16
-        textField.leftViewMode = .always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
-        return textField
-    }()
-
-    private let signInButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Sign In", for: .normal)
-        button.backgroundColor = UIColor.lightGray
-        button.setTitleColor(.darkGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        button.layer.cornerRadius = 16
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    private let socialSignInLabel: UILabel = {
-        let label = UILabel()
-        label.text = "or sign in using:"
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .gray
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let titleLabel = UIHelper.createLabel(text: "Sign In", font: .boldSystemFont(ofSize: 30))
+    private let subtitleLabel = UIHelper.createLabel(text: "Welcome back!", font: .systemFont(ofSize: 18), textColor: .gray)
+    private let emailTextField = UIHelper.createTextField(placeholder: "Email or Phone Number")
+    private let passwordTextField = UIHelper.createTextField(placeholder: "Password", isSecure: true)
+    private let signInButton = UIHelper.createButton(title: "Sign In", backgroundColor: .secondarySystemFill, titleColor: .darkGray)
+    private let socialSignInLabel = UIHelper.createLabel(text: "or sign in using:", font: .systemFont(ofSize: 16), textColor: .gray, alignment: .center)
 
     private let socialStackView: UIStackView = {
-        let facebookButton = UIButton()
-        facebookButton.setImage(UIImage(named: "facebook_icon"), for: .normal)
-        
-        let appleButton = UIButton()
-        appleButton.setImage(UIImage(named: "apple_icon"), for: .normal)
-
         let googleButton = UIButton()
         googleButton.setImage(UIImage(named: "google_icon"), for: .normal)
 
-        let stackView = UIStackView(arrangedSubviews: [facebookButton, appleButton, googleButton])
+        let stackView = UIStackView(arrangedSubviews: [googleButton])
         stackView.axis = .horizontal
-        stackView.spacing = 20
         stackView.distribution = .fillEqually
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -111,6 +45,24 @@ class SignInViewController: UIViewController {
         view.backgroundColor = .white
         setupUI()
         setupBindings()
+        setupCustomBackButton()
+    }
+
+    private func setupCustomBackButton() {
+        let backButton = UIButton(type: .system)
+        let chevronImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysTemplate)
+        backButton.setImage(chevronImage, for: .normal)
+        backButton.tintColor = .black
+        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+
+        let customBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = customBarButtonItem
+    }
+
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 
     private func setupUI() {
@@ -126,12 +78,12 @@ class SignInViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
-            subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            subtitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
-            emailTextField.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 40),
+            emailTextField.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 100),
             emailTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             emailTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             emailTextField.heightAnchor.constraint(equalToConstant: 50),
@@ -141,42 +93,39 @@ class SignInViewController: UIViewController {
             passwordTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             passwordTextField.heightAnchor.constraint(equalToConstant: 50),
 
-            signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
+            signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 40),
             signInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             signInButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             signInButton.heightAnchor.constraint(equalToConstant: 50),
 
-            socialSignInLabel.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 40),
+            socialSignInLabel.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 100),
             socialSignInLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
             socialStackView.topAnchor.constraint(equalTo: socialSignInLabel.bottomAnchor, constant: 20),
             socialStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            socialStackView.heightAnchor.constraint(equalToConstant: 50),
+            socialStackView.heightAnchor.constraint(equalToConstant: 40),
+            socialStackView.widthAnchor.constraint(equalToConstant: 40),
 
             termsLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             termsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
+
 
         signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
 
         if let googleButton = socialStackView.arrangedSubviews.last as? UIButton {
             googleButton.addTarget(self, action: #selector(googleSignInTapped), for: .touchUpInside)
         }
-
     }
     
     private func setupBindings() {
         viewModel.onSignInSuccess = { user in
-            print("✅ Successfully signed in!")
-            print("User Email: \(user.email ?? "N/A")")
-            print("User UID: \(user.uid)")
 
             let tabBarController = MainTabBarController()
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let window = windowScene.windows.first else { return }
             window.rootViewController = tabBarController
             window.makeKeyAndVisible()
-
         }
 
         viewModel.onSignInFailure = { [weak self] errorMessage in
@@ -194,7 +143,6 @@ class SignInViewController: UIViewController {
     @objc private func googleSignInTapped() {
         viewModel.signInWithGoogle()
     }
-
 }
 
 
