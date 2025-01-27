@@ -15,47 +15,60 @@ class ShopViewModel {
 
     func fetchSuppliers() {
         let storageRef = storage.reference().child("SuplierLogos")
-
-        storageRef.listAll { [weak self] result, error in
-            guard let self = self else { return }
-            
-            if let error = error {
-                print("Error listing supplier logos: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let result = result else {
-                print("Failed to fetch result from Firebase Storage.")
-                return
-            }
-            
-            self.suppliers.removeAll()
-            
-            let dispatchGroup = DispatchGroup()
-            
-            for item in result.items {
-                dispatchGroup.enter()
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            storageRef.listAll { [weak self] result, error in
+                guard let self = self else { return }
                 
-                let fileName = item.name
-                let supplierName = fileName.replacingOccurrences(of: ".png", with: "")
-                
-                item.downloadURL { url, error in
-                    if let url = url {
-                        let supplier = Suplier(name: supplierName, imageURL: url.absoluteString)
-                        self.suppliers.append(supplier)
-                        print("🌸🌸 \(supplierName) downloaded")
-                    } else {
-                        print("Failed to fetch URL for \(fileName): \(error?.localizedDescription ?? "Unknown error")")
-                    }
-                    dispatchGroup.leave()
+                if let error = error {
+                    print("Error listing supplier logos: \(error.localizedDescription)")
+                    return
                 }
-            }
-            
-            dispatchGroup.notify(queue: .main) {
-                self.onSuppliersFetched?()
+                
+                guard let result = result else {
+                    print("Failed to fetch result from Firebase Storage.")
+                    return
+                }
+                
+                let dispatchGroup = DispatchGroup()
+                for item in result.items {
+                    dispatchGroup.enter()
+                    
+                    let fileName = item.name
+                    let supplierName = fileName.replacingOccurrences(of: ".png", with: "")
+                    
+                    item.downloadURL { url, error in
+                        if let url = url {
+                            let supplier = Suplier(name: supplierName, imageURL: url.absoluteString)
+                            self.suppliers.append(supplier)
+                            print("🌸🌸 \(supplierName) downloaded")
+                        } else {
+                            print("Failed to fetch URL for \(fileName): \(error?.localizedDescription ?? "Unknown error")")
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+                
+                dispatchGroup.notify(queue: .main) {
+                    self.onSuppliersFetched?()
+                }
             }
         }
     }
 
+    func filterSuppliers(for query: String, completion: @escaping ([Suplier]) -> Void) {
+        if query.isEmpty {
+            completion(suppliers)
+        } else {
+            let filteredSuppliers = suppliers.filter {
+                $0.name.lowercased().contains(query.lowercased())
+            }
+            completion(filteredSuppliers)
+        }
+    }
+    
+    func prefetchSuppliers() {
+        fetchSuppliers()
+    }
 }
 

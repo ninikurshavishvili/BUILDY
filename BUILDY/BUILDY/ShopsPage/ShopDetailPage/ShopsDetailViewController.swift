@@ -8,12 +8,35 @@
 import UIKit
 import SwiftUI
 
-class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
     
     var supplier: Suplier?
     private var filteredProducts: [Product] = []
     private let navigationHandler = ShopDetailsNavigationHandler()
 
+    private let searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "Search"
+        searchBar.searchBarStyle = .prominent
+        
+        let textField = searchBar.searchTextField
+        textField.backgroundColor = .clear
+        textField.layer.cornerRadius = 8
+        textField.layer.masksToBounds = true
+        
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.lightGray,
+            .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "Search", attributes: placeholderAttributes)
+        
+        textField.leftView?.tintColor = .gray
+        textField.clearButtonMode = .whileEditing
+        textField.textAlignment = .left
+        
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        return searchBar
+    }()
 
     private let supplierNameLabel: UILabel = {
         let label = UILabel()
@@ -33,8 +56,9 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
 
     private let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 32, height: 250)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2 - 24, height: 180)
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        layout.minimumInteritemSpacing = 16
         layout.minimumLineSpacing = 16
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -47,6 +71,7 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         
         view.backgroundColor = .white
         setupUI()
+        searchBar.delegate = self
 
         if let supplier = supplier {
             supplierNameLabel.text = supplier.name
@@ -56,6 +81,7 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
     }
 
     private func setupUI() {
+        view.addSubview(searchBar)
         view.addSubview(supplierLogoImageView)
         view.addSubview(supplierNameLabel)
         view.addSubview(productCollectionView)
@@ -65,7 +91,11 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         productCollectionView.delegate = self
         
         NSLayoutConstraint.activate([
-            supplierLogoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            supplierLogoImageView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
             supplierLogoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             supplierLogoImageView.widthAnchor.constraint(equalToConstant: 100),
             supplierLogoImageView.heightAnchor.constraint(equalToConstant: 100),
@@ -114,4 +144,17 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         let selectedProduct = filteredProducts[indexPath.item]
         navigationHandler.navigateToProductDetails(from: self, with: selectedProduct)
     }
+
+    // MARK: - UISearchBarDelegate
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // Filter products based on the search text
+        guard let supplierName = supplier?.name else { return }
+        let viewModel = HomePageViewModel()
+        let allProducts = viewModel.products
+        filteredProducts = viewModel.filteredBySupplier(for: supplierName, from: allProducts).filter {
+            $0.name.lowercased().contains(searchText.lowercased())
+        }
+        productCollectionView.reloadData()
+    }
 }
+

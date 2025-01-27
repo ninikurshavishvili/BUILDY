@@ -14,4 +14,8 @@ class ProductCarouselViewModel {
     func fetchProducts(from allProducts: [Product]) {
         self.products = Array(allProducts.shuffled().prefix(5))
     }
+    
+    func prefetchProducts(allProducts: [Product]) {
+        fetchProducts(from: allProducts)
+    }
 }

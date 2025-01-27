@@ -100,7 +100,11 @@ class HomePageViewModel {
             imageFetchGroup.enter()
             DispatchQueue.global(qos: .background).async {
                 self.imageFetcher.fetchImage(from: url) { image in
-                    updatedProducts[index].imageURL = image
+                    if let image = image {
+                        updatedProducts[index].imageURL = image 
+                    } else {
+                        print("Image for product | \(product.name) | failed to load.")
+                    }
                     imageFetchGroup.leave()
                 }
             }

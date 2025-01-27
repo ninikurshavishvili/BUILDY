@@ -61,5 +61,9 @@ class CategoriesViewModel {
             }
         }
     }
+    
+    func prefetchCategories() {
+        fetchCategories()
+    }
 }
 

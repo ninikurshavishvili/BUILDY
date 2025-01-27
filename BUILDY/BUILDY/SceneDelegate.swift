@@ -16,8 +16,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let authorizationPage = AuthorizationPage()
+        let homePageViewModel = HomePageViewModel()
+        homePageViewModel.fetchProducts()
         
+        let categoryViewModel = CategoriesViewModel()
+        categoryViewModel.prefetchCategories()
+        
+//        let productCarouselViewModel = ProductCarouselViewModel()
+//        productCarouselViewModel.fetchProducts(from: homePageViewModel.products)
+        
+        let authorizationPage = AuthorizationPage()
         let navigationController = UINavigationController(rootViewController: authorizationPage)
         
         window?.rootViewController = navigationController
