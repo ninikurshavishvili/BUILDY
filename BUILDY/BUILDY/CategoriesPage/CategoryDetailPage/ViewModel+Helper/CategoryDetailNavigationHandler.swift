@@ -9,7 +9,7 @@
 import UIKit
 import SwiftUI
 
-class CategoryDetailNavigationHandler: CategoryDetailNavigation {
+final class CategoryDetailNavigationHandler: CategoryDetailNavigation {
     func navigateToProductDetails(from viewController: UIViewController, with product: Product) {
         let productDetailsView = ProductDetailsView(product: product)
             .environmentObject(WishlistManager.shared)

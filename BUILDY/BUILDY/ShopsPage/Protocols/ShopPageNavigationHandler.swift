@@ -12,7 +12,7 @@ protocol ShopPageNavigation {
     func navigateToProductDetails(from viewController: UIViewController, with product: Product)
 }
 
-class ShopPageNavigationHandler: ShopPageNavigation {
+final class ShopPageNavigationHandler: ShopPageNavigation {
     
     func navigateToProductDetails(from viewController: UIViewController, with product: Product) {
         let productDetailsView = ProductDetailsView(product: product)

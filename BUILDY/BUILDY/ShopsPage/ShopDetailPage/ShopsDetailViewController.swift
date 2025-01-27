@@ -8,12 +8,18 @@
 import UIKit
 import SwiftUI
 
-class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
+final class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
     
     var supplier: Suplier?
     private var filteredProducts: [Product] = []
     private let navigationHandler = ShopDetailsNavigationHandler()
-
+    
+    private let customTopBar: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.placeholder = "Search"
@@ -37,26 +43,11 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
-
-    private let supplierNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 24)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let supplierLogoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-
+    
     private let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2 - 24, height: 180)
+        let itemWidth = UIScreen.main.bounds.width / 2 - 24
+        layout.itemSize = CGSize(width: itemWidth, height: 200)
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         layout.minimumInteritemSpacing = 16
         layout.minimumLineSpacing = 16
@@ -65,59 +56,61 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         collectionView.backgroundColor = .clear
         return collectionView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = .white
+        setupNavigationBar()
         setupUI()
         searchBar.delegate = self
-
+        
         if let supplier = supplier {
-            supplierNameLabel.text = supplier.name
-            loadImage(from: supplier.imageURL)
             loadProducts(for: supplier.name)
         }
     }
-
+    
+    private func setupNavigationBar() {
+        let backButton = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapBackButton)
+        )
+        backButton.tintColor = .black
+        
+        navigationItem.leftBarButtonItem = backButton
+        navigationItem.titleView = searchBar
+    }
+    
+    @objc private func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     private func setupUI() {
-        view.addSubview(searchBar)
-        view.addSubview(supplierLogoImageView)
-        view.addSubview(supplierNameLabel)
+        view.addSubview(customTopBar)
+        customTopBar.addSubview(searchBar)
         view.addSubview(productCollectionView)
-
+        
         productCollectionView.register(ProductShopCell.self, forCellWithReuseIdentifier: ProductShopCell.identifier)
         productCollectionView.dataSource = self
         productCollectionView.delegate = self
         
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            supplierLogoImageView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
-            supplierLogoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            supplierLogoImageView.widthAnchor.constraint(equalToConstant: 100),
-            supplierLogoImageView.heightAnchor.constraint(equalToConstant: 100),
+            customTopBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            customTopBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            customTopBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            customTopBar.heightAnchor.constraint(equalToConstant: 56),
             
-            supplierNameLabel.topAnchor.constraint(equalTo: supplierLogoImageView.bottomAnchor, constant: 10),
-            supplierNameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: customTopBar.leadingAnchor, constant: 8),
+            searchBar.trailingAnchor.constraint(equalTo: customTopBar.trailingAnchor, constant: -16),
+            searchBar.centerYAnchor.constraint(equalTo: customTopBar.centerYAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 36),
             
-            productCollectionView.topAnchor.constraint(equalTo: supplierNameLabel.bottomAnchor, constant: 20),
-            productCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            productCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            productCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16)
+            productCollectionView.topAnchor.constraint(equalTo: customTopBar.bottomAnchor, constant: 16),
+            productCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            productCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            productCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    private func loadImage(from urlString: String?) {
-        guard let logoURL = urlString, let url = URL(string: logoURL) else { return }
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else { return }
-            DispatchQueue.main.async {
-                self.supplierLogoImageView.image = image
-            }
-        }.resume()
     }
     
     private func loadProducts(for supplierName: String) {
@@ -126,11 +119,11 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
         filteredProducts = viewModel.filteredBySupplier(for: supplierName, from: allProducts)
         productCollectionView.reloadData()
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return filteredProducts.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductShopCell.identifier, for: indexPath) as? ProductShopCell else {
             return UICollectionViewCell()
@@ -147,7 +140,6 @@ class ShopDetailsViewController: UIViewController, UICollectionViewDataSource, U
 
     // MARK: - UISearchBarDelegate
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // Filter products based on the search text
         guard let supplierName = supplier?.name else { return }
         let viewModel = HomePageViewModel()
         let allProducts = viewModel.products

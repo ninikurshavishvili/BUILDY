@@ -22,8 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let categoryViewModel = CategoriesViewModel()
         categoryViewModel.prefetchCategories()
         
-//        let productCarouselViewModel = ProductCarouselViewModel()
-//        productCarouselViewModel.fetchProducts(from: homePageViewModel.products)
+        let productCarouselViewModel = ProductCarouselViewModel()
+        productCarouselViewModel.fetchProducts(from: productCarouselViewModel.products)
         
         let authorizationPage = AuthorizationPage()
         let navigationController = UINavigationController(rootViewController: authorizationPage)

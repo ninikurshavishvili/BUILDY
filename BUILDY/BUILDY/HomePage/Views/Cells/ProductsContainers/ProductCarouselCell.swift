@@ -110,7 +110,7 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
         priceLabel.textColor = .white
         priceLabel.textAlignment = .center
         priceLabel.backgroundColor = .orange
-        priceLabel.text = "\(product.price) ₾"
+        priceLabel.text = "\(product.price)"
         priceLabel.layer.cornerRadius = 18
         priceLabel.clipsToBounds = true
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -125,13 +125,13 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
             
             blurContainer.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 10),
             blurContainer.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -10),
-            blurContainer.heightAnchor.constraint(equalToConstant: 70),
+            blurContainer.heightAnchor.constraint(equalToConstant: 60),
             blurContainer.trailingAnchor.constraint(equalTo: priceLabel.leadingAnchor, constant: -10),
             
             priceLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -10),
             priceLabel.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -10),
             priceLabel.widthAnchor.constraint(equalToConstant: 80),
-            priceLabel.heightAnchor.constraint(equalToConstant: 70),
+            priceLabel.heightAnchor.constraint(equalToConstant: 60),
             
             nameLabel.topAnchor.constraint(equalTo: blurContainer.contentView.topAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: blurContainer.contentView.leadingAnchor, constant: 10),
@@ -148,6 +148,6 @@ extension ProductCell {
     func configure(with product: Product) {
         productImageView.image = product.imageURL
         nameLabel.text = product.name
-        priceLabel.text = "\(product.price) ₾"
+        priceLabel.text = "\(product.price)"
     }
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoryDetailViewController: UIViewController {
+final class CategoryDetailViewController: UIViewController {
     
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()

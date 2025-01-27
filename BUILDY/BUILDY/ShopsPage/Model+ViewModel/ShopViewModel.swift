@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseStorage
 
-class ShopViewModel {
+final class ShopViewModel {
     private let storage = Storage.storage()
     private(set) var suppliers: [Suplier] = [] 
     var onSuppliersFetched: (() -> Void)?

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class CategoryDetailViewModel {
+final class CategoryDetailViewModel {
     private var allProducts: [Product] = []
     private(set) var products: [Product] = []
 

@@ -13,7 +13,7 @@ protocol ShopDetailsNavigation {
     func navigateToProductDetails(from viewController: UIViewController, with product: Product)
 }
 
-class ShopDetailsNavigationHandler: ShopDetailsNavigation {
+final class ShopDetailsNavigationHandler: ShopDetailsNavigation {
     func navigateToProductDetails(from viewController: UIViewController, with product: Product) {
         let productDetailsView = ProductDetailsView(product: product)
             .environmentObject(WishlistManager.shared)
@@ -23,4 +23,10 @@ class ShopDetailsNavigationHandler: ShopDetailsNavigation {
 
         viewController.navigationController?.pushViewController(hostingController, animated: true)
     }
+//    func handleNavigation(for collectionView: UICollectionView, indexPath: IndexPath, navigationController: UINavigationController?) {
+//        let selectedSupplier = ShopViewModel().suppliers[indexPath.item]
+//        let shopDetailsVC = ShopDetailsViewController()
+//        shopDetailsVC.supplier = selectedSupplier
+//        navigationController?.pushViewController(shopDetailsVC, animated: true)
+//    }
 }

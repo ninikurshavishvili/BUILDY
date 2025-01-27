@@ -78,6 +78,8 @@ class CategoriesViewController: UIViewController {
         setupCollectionView()
         setupViewModel()
         fetchCategories()
+        
+        searchBar.delegate = self
     }
 
     private func setupUI() {
@@ -135,6 +137,7 @@ class CategoriesViewController: UIViewController {
     }
 }
 
+
 extension CategoriesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return categories.count
@@ -160,5 +163,18 @@ extension CategoriesViewController: UICollectionViewDataSource, UICollectionView
         let productCategoryVC = CategoryDetailViewController(navigationHandler: CategoryDetailNavigationHandler())
         productCategoryVC.configure(with: filteredProducts)
         navigationController?.pushViewController(productCategoryVC, animated: true)
+    }
+}
+
+extension CategoriesViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            categories = viewModel.categories
+        } else {
+            categories = viewModel.categories.filter { category in
+                category.name.lowercased().contains(searchText.lowercased())
+            }
+        }
+        collectionView.reloadData()
     }
 }

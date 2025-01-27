@@ -7,77 +7,93 @@
 
 import UIKit
 
-class ProductShopCell: UICollectionViewCell {
+final class ProductShopCell: UICollectionViewCell {
     static let identifier = "ProductShopCell"
     
     private let productImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    let productNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    let priceLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .gray
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let heartButton: UIButton = {
+    private let favoriteButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.setImage(UIImage(systemName: "heart.fill"), for: .selected)
+        button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
+    private let infoContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        view.layer.cornerRadius = 16
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let productNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let productPriceLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private var product: Product?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.layer.cornerRadius = 8
-        contentView.layer.shadowColor = UIColor.black.cgColor
-        contentView.layer.shadowOpacity = 0.2
-        contentView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        contentView.layer.shadowRadius = 4
         contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 16
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.lightGray.cgColor
+        contentView.layer.masksToBounds = true
         
         contentView.addSubview(productImageView)
-        contentView.addSubview(productNameLabel)
-        contentView.addSubview(priceLabel)
-        contentView.addSubview(heartButton)
-
+        contentView.addSubview(favoriteButton)
+        contentView.addSubview(infoContainerView)
+        infoContainerView.addSubview(productNameLabel)
+        infoContainerView.addSubview(productPriceLabel)
+        
         NSLayoutConstraint.activate([
-            productImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            productImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            productImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.65),
+            productImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            productImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            productImageView.widthAnchor.constraint(equalToConstant: 80),
+            productImageView.heightAnchor.constraint(equalToConstant: 80),
             
-            heartButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            heartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            heartButton.widthAnchor.constraint(equalToConstant: 24),
-            heartButton.heightAnchor.constraint(equalToConstant: 24),
+            favoriteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 24),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 24),
             
-            productNameLabel.topAnchor.constraint(equalTo: productImageView.bottomAnchor, constant: 5),
-            productNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
-            productNameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
+            infoContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            infoContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            infoContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            infoContainerView.heightAnchor.constraint(equalToConstant: 60),
             
-            priceLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor, constant: 5),
-            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
-            priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-            priceLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5)
+            productNameLabel.leadingAnchor.constraint(equalTo: infoContainerView.leadingAnchor, constant: 8),
+            productNameLabel.topAnchor.constraint(equalTo: infoContainerView.topAnchor, constant: 8),
+            productNameLabel.trailingAnchor.constraint(equalTo: infoContainerView.trailingAnchor, constant: -8),
+            
+            productPriceLabel.leadingAnchor.constraint(equalTo: infoContainerView.leadingAnchor, constant: 8),
+            productPriceLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor, constant: 4),
+            productPriceLabel.trailingAnchor.constraint(equalTo: infoContainerView.trailingAnchor, constant: -8),
         ])
+        
+        favoriteButton.addTarget(self, action: #selector(didTapFavorite), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -85,9 +101,25 @@ class ProductShopCell: UICollectionViewCell {
     }
     
     func configure(with product: Product) {
-        productImageView.image = product.imageURL
+        self.product = product
         productNameLabel.text = product.name
-        priceLabel.text = "\(product.price)₾"
+        productPriceLabel.text = "\(product.price)₾"
+        productImageView.image = product.imageURL
+        
+        favoriteButton.isSelected = WishlistManager.shared.isInWishlist(product: product)
+    }
+    
+    @objc private func didTapFavorite() {
+        guard let product = product else { return }
+        
+        if WishlistManager.shared.isInWishlist(product: product) {
+            WishlistManager.shared.removeFromWishlist(product: product)
+            favoriteButton.isSelected = false
+        } else {
+            WishlistManager.shared.addToWishlist(product: product)
+            favoriteButton.isSelected = true
+        }
     }
 }
+
 
