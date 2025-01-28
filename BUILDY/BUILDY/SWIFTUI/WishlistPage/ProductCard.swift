@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ProductCard: View {
     let product: Product
+    @EnvironmentObject var cartManager: CartManager
+    @EnvironmentObject var wishlistManager: WishlistManager
 
     var body: some View {
-        HStack(spacing: 15) {
+        HStack(spacing: 12) {
             AsyncImage(url: product.linkToURL) { phase in
                 switch phase {
                 case .empty:
@@ -35,50 +37,53 @@ struct ProductCard: View {
             .background(Color.gray.opacity(0.2))
             .cornerRadius(10)
 
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(product.name)
-                    .font(.headline)
+                    .font(.system(size: 16, weight: .semibold))
                     .lineLimit(2)
 
                 Text("by \(product.supplier)")
-                    .font(.subheadline)
+                    .font(.system(size: 14))
                     .foregroundColor(.gray)
 
                 Text(product.price)
-                    .font(.subheadline)
-                    .fontWeight(.bold)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.black)
             }
 
             Spacer()
 
-            VStack {
+            VStack(spacing: 6) {
                 Button(action: {
-                    // MARK: - add to cart logic
+                    cartManager.addToCart(product: product)
                 }) {
-                    HStack {
+                    HStack(spacing: 4) {
                         Image(systemName: "cart")
                         Text("Add to cart")
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .padding(6)
-                    .foregroundColor(.white)
-                    .background(Color.black)
-                    .cornerRadius(5)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .foregroundColor(.black)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
                 }
 
                 Button(action: {
+                    wishlistManager.removeFromWishlist(product: product)
                 }) {
                     Image(systemName: "trash")
                         .foregroundColor(.red)
-                        .padding(6)
+                        .padding(8)
                         .background(Color.gray.opacity(0.2))
-                        .cornerRadius(5)
+                        .cornerRadius(10)
                 }
             }
         }
         .padding()
         .background(Color.white)
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
+

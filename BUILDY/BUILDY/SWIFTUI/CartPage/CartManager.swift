@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-class CartManager: ObservableObject {
+final class CartManager: ObservableObject {
     @Published private(set) var cartItems: [Product: Int] = [:]
     private let db = Firestore.firestore()
 
@@ -164,6 +164,31 @@ class CartManager: ObservableObject {
             supplier: supplier
         )
     }
+    
+    func removeProductCompletely(product: Product) {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+
+        if let index = cartItems.firstIndex(where: { $0.key.codeID == product.codeID }) {
+            cartItems.remove(at: index)
+            
+            Firestore.firestore()
+                .collection("users")
+                .document(userID)
+                .collection("cart")
+                .document(product.codeID)
+                .delete { error in
+                    if let error = error {
+                        print("Error removing product from cart: \(error.localizedDescription)")
+                    } else {
+                        print("Product removed from cart: \(product.name)")
+                    }
+                }
+        } else {
+            print("Product not found in cart.")
+        }
+    }
+
+
 
     func clearCart() {
         cartItems.removeAll()

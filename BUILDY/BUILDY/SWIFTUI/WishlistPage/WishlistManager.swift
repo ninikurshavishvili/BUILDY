@@ -10,7 +10,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-class WishlistManager: ObservableObject {
+final class WishlistManager: ObservableObject {
     
     static let shared = WishlistManager()
     @Published var wishlist: [Product] = []

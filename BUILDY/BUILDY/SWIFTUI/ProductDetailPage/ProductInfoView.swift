@@ -12,12 +12,12 @@ struct ProductInfoView: View {
     @Binding var showFullFeatures: Bool
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) { // Align content to the left
             Text(product.name)
                 .font(.title3)
                 .fontWeight(.semibold)
                 .padding(.horizontal)
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading) // Align name text to the left
             
             Text("\(product.price)")
                 .font(.title3)
@@ -61,7 +61,7 @@ struct ProductInfoView: View {
             .padding(.horizontal)
             
             HStack {
-                Text("Suplier:")
+                Text("Supplier:")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 Spacer()
@@ -80,3 +80,4 @@ struct ProductInfoView: View {
         }
     }
 }
+

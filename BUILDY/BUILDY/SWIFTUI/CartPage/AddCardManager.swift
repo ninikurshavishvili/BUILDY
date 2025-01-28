@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-class AddCardManager: ObservableObject {
+final class AddCardManager: ObservableObject {
     @Published var cardNumber: String = ""
     @Published var expiryDate: String = ""
     @Published var cvv: String = ""

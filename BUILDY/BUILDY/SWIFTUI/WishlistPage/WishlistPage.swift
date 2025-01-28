@@ -13,28 +13,16 @@ struct WishlistPage: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(["All", "Accessories", "Electric Kettles"], id: \.self) { category in
-                            Button(action: {
-                            }) {
-                                Text(category)
-                                    .font(.system(size: 16, weight: .medium))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(category == "All" ? Color.black : Color.gray.opacity(0.2))
-                                    .foregroundColor(category == "All" ? .white : .black)
-                                    .cornerRadius(10)
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-
                 if wishlistManager.wishlist.isEmpty {
+                    Image(systemName: "heart.fill")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .scaledToFit()
+                        .foregroundColor(.black)
+                        .padding(.bottom)
                     Text("Your Wishlist is empty!")
                         .font(.headline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.black)
                         .padding()
                 } else {
                     ScrollView {
