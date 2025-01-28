@@ -20,6 +20,7 @@ class UIHelper {
         textField.layer.cornerRadius = 16
         textField.leftViewMode = .always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
+        textField.autocapitalizationType = .none
         return textField
     }
     

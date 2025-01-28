@@ -7,9 +7,10 @@
 
 
 import UIKit
-import FirebaseAuth
 
 final class SignUpViewController: UIViewController {
+    
+    private let viewModel = AuthorizationViewModel()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -49,24 +50,20 @@ final class SignUpViewController: UIViewController {
         view.backgroundColor = .white
         setupUI()
         setupCustomBackButton()
+        setupViewModelBindings()
     }
+    
     private func setupCustomBackButton() {
         let backButton = UIButton(type: .system)
         let chevronImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysTemplate)
         backButton.setImage(chevronImage, for: .normal)
         backButton.tintColor = .black
-        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         backButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let customBarButtonItem = UIBarButtonItem(customView: backButton)
-        navigationItem.leftBarButtonItem = customBarButtonItem
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
 
-    @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
-    }
-    
     private func setupUI() {
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
@@ -112,30 +109,33 @@ final class SignUpViewController: UIViewController {
         ])
     }
     
+    private func setupViewModelBindings() {
+        viewModel.onSignInFailure = { [weak self] message in
+            self?.showAlert(message: message)
+        }
+        viewModel.onSignInSuccess = { [weak self] _ in
+            self?.navigateToSignIn()
+        }
+    }
+
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     @objc private func signUpTapped() {
-        guard let fullName = fullNameTextField.text, !fullName.isEmpty,
-              let email = emailTextField.text, !email.isEmpty,
+        guard let email = emailTextField.text, !email.isEmpty,
               let password = passwordTextField.text, !password.isEmpty,
               let confirmPassword = confirmPasswordTextField.text, !confirmPassword.isEmpty else {
             showAlert(message: "Please fill in all fields.")
             return
         }
-
+        
         if password != confirmPassword {
             showAlert(message: "Passwords do not match.")
             return
         }
-
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
-            if let error = error {
-                print("Account creation failed: \(error.localizedDescription)")
-                self?.showAlert(message: "Account creation failed. Please try again.")
-                return
-            }
-            print("Account created successfully")
-            
-            self?.navigateToSignIn()
-        }
+        
+        viewModel.createAccount(email: email, password: password)
     }
 
     private func showAlert(message: String) {
@@ -145,7 +145,7 @@ final class SignUpViewController: UIViewController {
     }
     
     private func navigateToSignIn() {
-        if let navigationController = self.navigationController {
+        if let navigationController = navigationController {
             let signInViewController = SignInViewController()
             navigationController.pushViewController(signInViewController, animated: true)
         }

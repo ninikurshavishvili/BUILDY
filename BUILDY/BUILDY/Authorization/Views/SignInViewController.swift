@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import FirebaseAuth
 
 final class SignInViewController: UIViewController {
 
@@ -74,7 +73,6 @@ final class SignInViewController: UIViewController {
         view.addSubview(socialSignInLabel)
         view.addSubview(socialStackView)
         view.addSubview(termsLabel)
-        
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
@@ -144,5 +142,3 @@ final class SignInViewController: UIViewController {
         viewModel.signInWithGoogle()
     }
 }
-
-

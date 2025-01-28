@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AuthorizationPage: UIViewController {
+final class AuthorizationPage: UIViewController {
     
     let viewModel = AuthorizationViewModel()
 
