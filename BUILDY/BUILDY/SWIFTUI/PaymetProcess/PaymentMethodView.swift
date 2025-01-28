@@ -25,6 +25,7 @@ struct PaymentMethodView: View {
                         }) {
                             Image(systemName: "chevron.left")
                                 .foregroundColor(.black)
+                                .imageScale(.large)
                                 .padding()
                         }
                         Spacer()
@@ -32,9 +33,10 @@ struct PaymentMethodView: View {
                     .padding(.leading)
 
                     HStack {
-                        Image(systemName: "cart.fill")
+                        Image("TBC")
                             .resizable()
                             .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                             .padding()
 
                         Spacer()
@@ -50,18 +52,29 @@ struct PaymentMethodView: View {
                             .font(.headline)
                             .padding(.leading)
 
-                        HStack {
-                            TextField("Card Number", text: $cardManager.cardNumber)
-                                .keyboardType(.numberPad)
-                                .padding()
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(10)
-                                .frame(maxWidth: .infinity)
+                        VStack {
+                            HStack {
+                                TextField("Card Number", text: $cardManager.cardNumber)
+                                    .keyboardType(.numberPad)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(10)
+                                    .frame(maxWidth: .infinity)
 
-                            Image("visa_logo")
-                                .resizable()
-                                .frame(width: 40, height: 25)
+                                Image("visa")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                Image("american-express")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                Image("master-card")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                            }
                         }
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
 
                         HStack {
                             TextField("MM/YY", text: $cardManager.expiryDate)
@@ -88,7 +101,7 @@ struct PaymentMethodView: View {
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.orange)
+                            .background(.gray)
                             .cornerRadius(10)
                     }
                     .padding(.horizontal)
@@ -104,11 +117,13 @@ struct PaymentMethodView: View {
                             }
                         }
                     }) {
-                        Text("Confirm & Pay")
+                        Text("Confirm & Pay (\(cartManager.getTotalPrice(), specifier: "%.2f") ₾)")
                             .foregroundColor(.white)
-                            .padding()
+                            .font(.title3)
+                            .bold()
                             .frame(maxWidth: .infinity)
-                            .background(Color.green)
+                            .padding()
+                            .background(Color.customOrange)
                             .cornerRadius(10)
                     }
                     .padding(.horizontal)
@@ -124,6 +139,7 @@ struct PaymentMethodView: View {
                 .onAppear {
                     cardManager.fetchUserCard()
                 }
+                .navigationBarHidden(true)
 
                 if showAlertAnimation {
                     VStack {
@@ -154,7 +170,6 @@ struct PaymentMethodView: View {
                     EmptyView()
                 }
             }
-            .navigationBarHidden(true)
         }
     }
 }

@@ -35,7 +35,7 @@ struct AddPaymentView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 100, height: 100)
                 .padding()
-                .background(Color.orange)
+                .background(Color.customOrange)
                 .cornerRadius(20)
 
             Text("Your payment methods list is empty.\nAdd your payment methods for\nfaster check out")
@@ -46,7 +46,7 @@ struct AddPaymentView: View {
 
             NavigationLink(destination: PaymentMethodView()) {
                 Text("Add new card")
-                    .foregroundColor(.orange)
+                    .foregroundColor(.customOrange)
                     .fontWeight(.bold)
             }
             Spacer()
