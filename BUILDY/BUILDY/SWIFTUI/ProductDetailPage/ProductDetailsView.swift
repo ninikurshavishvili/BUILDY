@@ -34,7 +34,6 @@ struct ProductDetailsView: View {
             
             ScrollView {
                 VStack(spacing: 16) {
-                    // Product Image
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.white)
@@ -47,7 +46,6 @@ struct ProductDetailsView: View {
                     .frame(height: 250)
                     .padding(.horizontal)
                     
-                    // Quantity Control
                     HStack(spacing: 16) {
                         Button(action: {
                             if quantity > 1 { quantity -= 1 }
@@ -83,12 +81,10 @@ struct ProductDetailsView: View {
                     }
                     .padding(.horizontal)
                     
-                    // Product Info
                     ProductInfoView(product: product, showFullFeatures: $showFullFeatures)
                     
                     Spacer()
                     
-                    // Footer Buttons
                     HStack(spacing: 16) {
                         Button(action: {
                             wishlistManager.addToWishlist(product: product)

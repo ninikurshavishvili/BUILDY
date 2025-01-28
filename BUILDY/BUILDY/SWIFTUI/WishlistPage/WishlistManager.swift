@@ -24,6 +24,10 @@ final class WishlistManager: ObservableObject {
     private init() {}
 
     func addToWishlist(product: Product) {
+        if UserDefaults.standard.bool(forKey: "isGuest") {
+            return
+        }
+
         guard !wishlist.contains(where: { $0.codeID == product.codeID }) else { return }
         
         wishlist.append(product)

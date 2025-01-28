@@ -20,6 +20,10 @@ final class CartManager: ObservableObject {
     }
 
     func addToCart(product: Product) {
+        if UserDefaults.standard.bool(forKey: "isGuest") {
+            return
+        }
+
         cartItems[product, default: 0] += 1
         saveToFirestore(product: product)
     }
