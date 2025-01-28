@@ -11,74 +11,111 @@ struct ProductDetailsView: View {
     let product: Product
     @EnvironmentObject var wishlistManager: WishlistManager
     @EnvironmentObject var cartManager: CartManager
-
+    @Environment(\.presentationMode) var presentationMode
+    @State private var quantity: Int = 1
+    @State private var showFullFeatures: Bool = false
+    
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Image(uiImage: product.imageURL ?? (UIImage(named: "placeholder") ?? UIImage()))
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 300)
-                    .cornerRadius(8)
-                    .padding()
-                
-                Text(product.name)
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.horizontal)
-
-                Text("Price: \(product.price) \(product.unit)")
-                    .font(.headline)
-                    .foregroundColor(.orange)
-                    .padding(.horizontal)
-
-                Text("Features:")
-                    .font(.headline)
-                    .padding(.horizontal)
-                Text(product.featuresGeo)
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
-
-                Text("Supplier: \(product.supplier)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal)
-
-                HStack {
-                    Button(action: {
-                        if wishlistManager.isInWishlist(product: product) {
-                            wishlistManager.removeFromWishlist(product: product)
-                        } else {
-                            wishlistManager.addToWishlist(product: product)
-                        }
-                    }) {
-                        Text(wishlistManager.isInWishlist(product: product) ? "Remove from Wishlist" : "Add to Wishlist")
-                            .foregroundColor(.red)
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(8)
-
-                    Spacer()
-
-                    Button(action: {
-                        cartManager.addToCart(product: product)
-                    }) {
-                        Text("Add to Cart")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.green)
-                            .cornerRadius(8)
-                    }
+        VStack {
+            HStack {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.black)
+                        .font(.title2)
                 }
-                .padding(.horizontal)
-
+                Spacer()
+                Text(product.supplier)
+                    .font(.headline)
+                Spacer()
                 Spacer()
             }
             .padding()
+            
+            ScrollView {
+                VStack(spacing: 16) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white)
+                            .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                        Image(uiImage: product.imageURL ?? (UIImage(named: "placeholder") ?? UIImage()))
+                            .resizable()
+                            .scaledToFit()
+                            .padding()
+                    }
+                    .frame(height: 250)
+                    .padding(.horizontal)
+                    
+                    ProductInfoView(product: product, showFullFeatures: $showFullFeatures)
+                    
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            if quantity > 1 { quantity -= 1 }
+                        }) {
+                            Image(systemName: "minus")
+                                .font(.title3)
+                                .foregroundColor(.black)
+                        }
+                        .frame(width: 36, height: 36)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                        
+                        Text("\(quantity)")
+                            .font(.title3)
+                            .fontWeight(.medium)
+                        
+                        Button(action: {
+                            quantity += 1
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title3)
+                                .foregroundColor(.black)
+                        }
+                        .frame(width: 36, height: 36)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                        
+                        Spacer()
+                        
+                        Text("Pc")
+                            .font(.body)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            wishlistManager.addToWishlist(product: product)
+                        }) {
+                            Text("Add to Wishlist")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.black)
+                                .cornerRadius(12)
+                        }
+                        
+                        Button(action: {
+                            cartManager.addToCart(product: product)
+                        }) {
+                            Text("Add to Cart")
+                                .font(.headline)
+                                .foregroundColor(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.gray.opacity(0.1))
+                                .cornerRadius(12)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
         }
-        .navigationTitle(product.name)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
     }
 }
+
