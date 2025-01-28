@@ -29,12 +29,12 @@ class HomePageViewController: UIViewController {
     private var viewModel = HomePageViewModel()
     private var shopViewModel = ShopViewModel()
     
-    private var productNavigationHandler: NavigationHandler!
-    private var categoryNavigationHandler: NavigationHandler!
-    private var categoriesDataSource: CategoriesDataSource!
-    private var productsDataSource: ProductsDataSource!
-    private var shopsDataSource: ShopsDataSource!
-    private var dataFetcher: HomePageDataFetcher!
+    private var productNavigationHandler: NavigationHandler?
+    private var categoryNavigationHandler: NavigationHandler?
+    private var categoriesDataSource: CategoriesDataSource?
+    private var productsDataSource: ProductsDataSource?
+    private var shopsDataSource: ShopsDataSource?
+    private var dataFetcher: HomePageDataFetcher?
 
      
     
@@ -239,25 +239,32 @@ class HomePageViewController: UIViewController {
     }
     
     private func setupDataSources() {
-            categoriesDataSource = CategoriesDataSource(viewModel: categoriesViewModel)
-            productsDataSource = ProductsDataSource(viewModel: viewModel)
-            shopsDataSource = ShopsDataSource(viewModel: shopViewModel)
 
-            categoriesContainerCell.configure(delegate: self, dataSource: categoriesDataSource) { [weak self] in
-                guard let self = self else { return }
-                let categoriesVC = CategoriesViewController()
-                self.navigationController?.pushViewController(categoriesVC, animated: true)
-            }
+        categoriesDataSource = CategoriesDataSource(viewModel: categoriesViewModel)
+        productsDataSource = ProductsDataSource(viewModel: viewModel)
+        shopsDataSource = ShopsDataSource(viewModel: shopViewModel)
 
-            productsContainerCell.configure(delegate: self, dataSource: productsDataSource)
-
-            shopsContainerCell.configure(delegate: self, dataSource: self) { [weak self] in
-                guard let self = self else { return }
-                let shopViewController = ShopViewController()
-                self.navigationController?.pushViewController(shopViewController, animated: true)
-            }
+        guard let categoriesDataSource = categoriesDataSource,
+              let productsDataSource = productsDataSource,
+              let shopsDataSource = shopsDataSource else {
+            return
         }
-    
+
+        categoriesContainerCell.configure(delegate: self, dataSource: categoriesDataSource) { [weak self] in
+            guard let self = self else { return }
+            let categoriesVC = CategoriesViewController()
+            self.navigationController?.pushViewController(categoriesVC, animated: true)
+        }
+
+        productsContainerCell.configure(delegate: self, dataSource: productsDataSource)
+
+        shopsContainerCell.configure(delegate: self, dataSource: shopsDataSource) { [weak self] in
+            guard let self = self else { return }
+            let shopViewController = ShopViewController()
+            self.navigationController?.pushViewController(shopViewController, animated: true)
+        }
+    }
+
     @objc private func profileButtonTapped() {
         let viewModel = AuthorizationViewModel()
 
@@ -266,9 +273,9 @@ class HomePageViewController: UIViewController {
             return
         }
 
-        viewModel.fetchUserProfile { [weak self] (name: String, email: String, phone: String, address: String) in
+        viewModel.fetchUserProfile { [weak self] (name, email, phone, address) in
             guard let self = self else { return }
-
+            
             let profileManager = ProfileManager()
             profileManager.userName = name
             profileManager.userEmail = email
@@ -333,11 +340,12 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == productsContainerCell.productsCollectionView {
+            guard let productNavigationHandler = productNavigationHandler else { return }
             productNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
         } else if collectionView == categoriesContainerCell.categoriesCollectionView {
+            guard let categoryNavigationHandler = categoryNavigationHandler else { return }
             categoryNavigationHandler.handleNavigation(for: collectionView, indexPath: indexPath, navigationController: navigationController)
         } else if collectionView == shopsContainerCell.shopsCollectionView {
-            let selectedSupplier = shopViewModel.suppliers[indexPath.item]
             let shopDetailsVC = ShopViewController()
             navigationController?.pushViewController(shopDetailsVC, animated: true)
         }
@@ -357,10 +365,19 @@ extension HomePageViewController: UICollectionViewDataSource, UICollectionViewDe
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == categoriesContainerCell.categoriesCollectionView {
+            guard let categoriesDataSource = categoriesDataSource else {
+                fatalError("categoriesDataSource is nil")
+            }
             return categoriesDataSource.collectionView(collectionView, cellForItemAt: indexPath)
         } else if collectionView == productsContainerCell.productsCollectionView {
+            guard let productsDataSource = productsDataSource else {
+                fatalError("productsDataSource is nil")
+            }
             return productsDataSource.collectionView(collectionView, cellForItemAt: indexPath)
         } else {
+            guard let shopsDataSource = shopsDataSource else {
+                fatalError("shopsDataSource is nil")
+            }
             return shopsDataSource.collectionView(collectionView, cellForItemAt: indexPath)
         }
     }
