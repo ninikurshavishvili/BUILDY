@@ -42,7 +42,7 @@ struct ProfileView: View {
                             }
                             Spacer()
                             Image(systemName: "chevron.forward")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.black)
                         }
                         .padding()
                         .background(Color.white)
