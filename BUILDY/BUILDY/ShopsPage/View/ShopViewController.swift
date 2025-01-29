@@ -48,6 +48,15 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
+    
+    private let browseLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Browse by Suplier"
+        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     private let navigationHandler = ShopPageNavigationHandler()
 
@@ -94,7 +103,7 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)

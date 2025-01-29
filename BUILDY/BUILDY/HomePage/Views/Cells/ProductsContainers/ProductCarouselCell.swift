@@ -109,7 +109,7 @@ class ProductCarouselCell: UICollectionViewCell, UICollectionViewDataSource, UIC
         priceLabel.font = UIFont.boldSystemFont(ofSize: 18)
         priceLabel.textColor = .white
         priceLabel.textAlignment = .center
-        priceLabel.backgroundColor = .orange
+        priceLabel.backgroundColor = AppColors.customOrange
         priceLabel.text = "\(product.price)"
         priceLabel.layer.cornerRadius = 18
         priceLabel.clipsToBounds = true

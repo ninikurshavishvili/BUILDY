@@ -20,10 +20,19 @@ class SuplierCellView: UIView {
 
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 16)
+        label.font = .boldSystemFont(ofSize: 20)
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    private let chevronImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "chevron.right")
+        imageView.tintColor = .black
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
 
     override init(frame: CGRect) {
@@ -38,16 +47,22 @@ class SuplierCellView: UIView {
     private func setupViews() {
         addSubview(logoImageView)
         addSubview(nameLabel)
+        addSubview(chevronImageView)
 
         NSLayoutConstraint.activate([
             logoImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             logoImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            logoImageView.widthAnchor.constraint(equalToConstant: 50),
-            logoImageView.heightAnchor.constraint(equalToConstant: 50),
+            logoImageView.widthAnchor.constraint(equalToConstant: 60),
+            logoImageView.heightAnchor.constraint(equalToConstant: 60),
 
             nameLabel.centerYAnchor.constraint(equalTo: logoImageView.centerYAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: logoImageView.trailingAnchor, constant: 8),
-            nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)
+            nameLabel.trailingAnchor.constraint(equalTo: chevronImageView.leadingAnchor, constant: -8),
+
+            chevronImageView.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            chevronImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            chevronImageView.widthAnchor.constraint(equalToConstant: 20),
+            chevronImageView.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
 
@@ -65,6 +80,7 @@ class SuplierCellView: UIView {
         nameLabel.text = supplier.name
     }
 }
+
 extension UIView {
     func viewController() -> UIViewController? {
         var responder: UIResponder? = self

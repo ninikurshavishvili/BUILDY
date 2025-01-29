@@ -9,40 +9,17 @@ import SwiftUI
 
 class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
 
-    private var isGuestUser: Bool {
-        UserDefaults.standard.bool(forKey: "isGuest")
-    }
+    private let tabBarManager = TabBarManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
 
+        tabBar.tintColor = AppColors.customOrange
+
         applyBlurEffectToTabBar()
 
-        let homePageVC = CustomNavigationController(rootViewController: HomePageViewController())
-        homePageVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
-
-        let categoriesPageVC = CustomNavigationController(rootViewController: CategoriesViewController())
-        categoriesPageVC.tabBarItem = UITabBarItem(title: "Categories", image: UIImage(systemName: "text.page.badge.magnifyingglass"), tag: 1)
-
-        let shopVC = CustomNavigationController(rootViewController: ShopViewController())
-        shopVC.tabBarItem = UITabBarItem(title: "Shops", image: UIImage(systemName: "building.2.fill"), tag: 2)
-
-        let wishlistPageVC = CustomNavigationController(rootViewController: UIHostingController(
-            rootView: WishlistPage()
-                .environmentObject(WishlistManager.shared)
-                .environmentObject(CartManager.shared)
-        ))
-        wishlistPageVC.tabBarItem = UITabBarItem(title: "Wishlist", image: UIImage(systemName: "heart.fill"), tag: 3)
-
-        let cartPageVC = CustomNavigationController(rootViewController: UIHostingController(
-            rootView: CartPage()
-                .environmentObject(WishlistManager.shared)
-                .environmentObject(CartManager.shared)
-        ))
-        cartPageVC.tabBarItem = UITabBarItem(title: "Cart", image: UIImage(systemName: "cart.fill"), tag: 4)
-
-        viewControllers = [homePageVC, categoriesPageVC, shopVC, wishlistPageVC, cartPageVC]
+        viewControllers = tabBarManager.setupTabBar()
     }
 
     private func applyBlurEffectToTabBar() {
@@ -51,15 +28,16 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
         blurEffectView.frame = tabBar.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tabBar.insertSubview(blurEffectView, at: 0)
+        
+        tabBar.layer.cornerRadius = 16
+        tabBar.layer.masksToBounds = true
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        if let index = viewControllers?.firstIndex(of: viewController), index == 3 || index == 4 {
-            if isGuestUser {
-                AuthenticationManager.shared.navigateToAuthorization()
-                return false
-            }
+        if let index = viewControllers?.firstIndex(of: viewController) {
+            return tabBarManager.shouldAllowTabSelection(at: index)
         }
         return true
     }
 }
+

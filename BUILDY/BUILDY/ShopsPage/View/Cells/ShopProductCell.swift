@@ -70,7 +70,7 @@ class ShopProductCell: UICollectionViewCell {
             infoContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             infoContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             infoContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            infoContainerView.heightAnchor.constraint(equalToConstant: 80),
+            infoContainerView.heightAnchor.constraint(equalToConstant: 55),
             
             nameLabel.leadingAnchor.constraint(equalTo: infoContainerView.leadingAnchor, constant: 8),
             nameLabel.topAnchor.constraint(equalTo: infoContainerView.topAnchor, constant: 8),

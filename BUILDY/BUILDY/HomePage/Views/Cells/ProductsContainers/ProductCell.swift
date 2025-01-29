@@ -33,14 +33,14 @@ class ProductCell: UICollectionViewCell {
      let nameLabel: UILabel = {
         let label = UILabel()
          label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     let priceLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textColor = AppColors.customOrange
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -72,7 +72,7 @@ class ProductCell: UICollectionViewCell {
             blurContainerView.leadingAnchor.constraint(equalTo: productImageView.leadingAnchor),
             blurContainerView.trailingAnchor.constraint(equalTo: productImageView.trailingAnchor),
             blurContainerView.bottomAnchor.constraint(equalTo: productImageView.bottomAnchor),
-            blurContainerView.heightAnchor.constraint(equalToConstant: 60),
+            blurContainerView.heightAnchor.constraint(equalToConstant: 70),
 
             nameLabel.topAnchor.constraint(equalTo: blurContainerView.topAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: blurContainerView.leadingAnchor, constant: 8),

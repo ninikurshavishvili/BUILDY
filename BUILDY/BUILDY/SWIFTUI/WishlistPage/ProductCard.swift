@@ -12,6 +12,7 @@ struct ProductCard: View {
     @EnvironmentObject var cartManager: CartManager
     @EnvironmentObject var wishlistManager: WishlistManager
     @State private var showDeleteAlert = false
+    @State private var isProductInCart = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -57,10 +58,11 @@ struct ProductCard: View {
             VStack(spacing: 6) {
                 Button(action: {
                     cartManager.addToCart(product: product)
+                    isProductInCart = true
                 }) {
                     HStack(spacing: 4) {
-                        Image(systemName: "cart")
-                        Text("Add to cart")
+                        Image(systemName: isProductInCart ? "cart.fill" : "cart")
+                        Text(isProductInCart ? "Added to cart" : "Add to cart")
                     }
                     .font(.system(size: 14, weight: .medium))
                     .padding(.horizontal, 10)
@@ -81,7 +83,7 @@ struct ProductCard: View {
                     Image(systemName: "trash")
                         .foregroundColor(.red)
                         .padding(8)
-                        .background(Color.gray.opacity(0.2))
+                        .background(Color.gray.opacity(0.1))
                         .cornerRadius(10)
                 }
             }

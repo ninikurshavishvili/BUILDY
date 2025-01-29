@@ -30,7 +30,7 @@ final class AuthorizationPage: UIViewController {
         let attributedString = NSMutableAttributedString(string: "Enter as a Guest")
         
         attributedString.addAttributes([
-            .foregroundColor: UIColor.orange,
+            .foregroundColor: AppColors.customOrange,
             .font: UIFont.boldSystemFont(ofSize: 16)
         ], range: (attributedString.string as NSString).range(of: "Guest"))
         
