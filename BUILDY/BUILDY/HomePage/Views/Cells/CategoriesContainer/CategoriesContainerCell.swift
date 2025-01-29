@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Lottie
 
 class CategoriesContainerCell: UICollectionViewCell {
     
@@ -37,6 +38,15 @@ class CategoriesContainerCell: UICollectionViewCell {
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
+    
+    private let loadingAnimationView: LottieAnimationView = {
+        let animationView = LottieAnimationView(name: "loading-animation") 
+        animationView.loopMode = .loop
+        animationView.contentMode = .scaleAspectFit
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        return animationView
+    }()
+
 
     var onSeeAllTapped: (() -> Void)?
 
