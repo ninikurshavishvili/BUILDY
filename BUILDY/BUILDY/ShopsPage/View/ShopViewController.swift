@@ -66,15 +66,24 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
     }
 
     private func setupSearchBar() {
-        view.addSubview(searchBar)
-        
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(searchBar)
+
+        view.addSubview(containerView)
+
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            searchBar.heightAnchor.constraint(equalToConstant: 44)
+            containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            containerView.heightAnchor.constraint(equalToConstant: 44),
+
+            searchBar.topAnchor.constraint(equalTo: containerView.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            searchBar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            searchBar.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
-        
+
         searchBar.delegate = self
     }
 
@@ -85,7 +94,7 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)

@@ -14,12 +14,6 @@ final class ShopDetailsViewController: UIViewController, UICollectionViewDataSou
     private var filteredProducts: [Product] = []
     private let navigationHandler = ShopDetailsNavigationHandler()
     
-    private let customTopBar: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.placeholder = "Search"
@@ -87,8 +81,6 @@ final class ShopDetailsViewController: UIViewController, UICollectionViewDataSou
     }
     
     private func setupUI() {
-        view.addSubview(customTopBar)
-        customTopBar.addSubview(searchBar)
         view.addSubview(productCollectionView)
         
         productCollectionView.register(ProductShopCell.self, forCellWithReuseIdentifier: ProductShopCell.identifier)
@@ -96,17 +88,7 @@ final class ShopDetailsViewController: UIViewController, UICollectionViewDataSou
         productCollectionView.delegate = self
         
         NSLayoutConstraint.activate([
-            customTopBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            customTopBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            customTopBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            customTopBar.heightAnchor.constraint(equalToConstant: 56),
-            
-            searchBar.leadingAnchor.constraint(equalTo: customTopBar.leadingAnchor, constant: 8),
-            searchBar.trailingAnchor.constraint(equalTo: customTopBar.trailingAnchor, constant: -16),
-            searchBar.centerYAnchor.constraint(equalTo: customTopBar.centerYAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 36),
-            
-            productCollectionView.topAnchor.constraint(equalTo: customTopBar.bottomAnchor, constant: 16),
+            productCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             productCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             productCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             productCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)

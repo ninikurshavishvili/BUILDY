@@ -75,8 +75,7 @@ class CategoriesContainerCell: UICollectionViewCell {
             categoriesCollectionView.topAnchor.constraint(equalTo: categoriesTitleLabel.bottomAnchor, constant: 16),
             categoriesCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             categoriesCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            categoriesCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            categoriesCollectionView.heightAnchor.constraint(equalToConstant: 120)
+            categoriesCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
 

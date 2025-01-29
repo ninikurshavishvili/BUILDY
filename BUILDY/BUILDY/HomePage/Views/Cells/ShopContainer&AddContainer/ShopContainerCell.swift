@@ -65,8 +65,8 @@ class ShopsContainerCell: UICollectionViewCell {
             shopsCollectionView.topAnchor.constraint(equalTo: shopsTitleLabel.bottomAnchor, constant: 16),
             shopsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             shopsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            shopsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            shopsCollectionView.heightAnchor.constraint(equalToConstant: 120)
+            shopsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+
         ])
     }
 

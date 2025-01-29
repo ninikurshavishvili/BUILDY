@@ -11,6 +11,7 @@ struct ProductCard: View {
     let product: Product
     @EnvironmentObject var cartManager: CartManager
     @EnvironmentObject var wishlistManager: WishlistManager
+    @State private var showDeleteAlert = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -70,7 +71,12 @@ struct ProductCard: View {
                 }
 
                 Button(action: {
-                    wishlistManager.removeFromWishlist(product: product)
+                    withAnimation {
+                        showDeleteAlert.toggle()
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        wishlistManager.removeFromWishlist(product: product)
+                    }
                 }) {
                     Image(systemName: "trash")
                         .foregroundColor(.red)
@@ -84,6 +90,22 @@ struct ProductCard: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+
+        if showDeleteAlert {
+            DeleteAlert()
+                .transition(
+                    .asymmetric(
+                        insertion: .move(edge: .top).combined(with: .opacity),
+                        removal: .move(edge: .top).combined(with: .opacity)
+                    )
+                )
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation(.easeInOut(duration: 0.6)) {
+                            showDeleteAlert = false
+                        }
+                    }
+                }
+        }
     }
 }
-

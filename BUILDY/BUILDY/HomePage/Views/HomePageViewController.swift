@@ -154,11 +154,11 @@ class HomePageViewController: UIViewController {
             topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             topBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            topBarView.heightAnchor.constraint(equalToConstant: 50),
-            
-            logoImageView.heightAnchor.constraint(equalToConstant: 70),
+            topBarView.heightAnchor.constraint(equalToConstant: 70),
+
+            logoImageView.heightAnchor.constraint(equalToConstant: 50),
             logoImageView.widthAnchor.constraint(equalToConstant: 190),
-            
+
             profileButton.heightAnchor.constraint(equalToConstant: 30),
             profileButton.widthAnchor.constraint(equalToConstant: 30)
         ])
