@@ -11,7 +11,7 @@ protocol ImageFetcherProtocol {
     func fetchImage(from url: URL, completion: @escaping (UIImage?) -> Void)
 }
 
-class ImageFetcher: ImageFetcherProtocol {
+final class ImageFetcher: ImageFetcherProtocol {
     func fetchImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
         URLSession.shared.dataTask(with: url) { data, _, error in
             guard let data = data, error == nil else {

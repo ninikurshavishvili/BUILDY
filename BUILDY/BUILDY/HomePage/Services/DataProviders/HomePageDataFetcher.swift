@@ -12,7 +12,7 @@ protocol DataFetcher {
     func fetchSuppliers(completion: @escaping () -> Void)
 }
 
-class HomePageDataFetcher: DataFetcher {
+final class HomePageDataFetcher: DataFetcher {
     private let categoriesViewModel: CategoriesViewModel
     private let viewModel: HomePageViewModel
     private let shopViewModel: ShopViewModel

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoriesDataSource: NSObject, UICollectionViewDataSource {
+final class CategoriesDataSource: NSObject, UICollectionViewDataSource {
     private let viewModel: CategoriesViewModel
     
     init(viewModel: CategoriesViewModel) {
@@ -21,7 +21,7 @@ class CategoriesDataSource: NSObject, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoriesCell.identifier, for: indexPath) as! CategoriesCell
         let category = viewModel.categories[indexPath.item]
-        cell.configure(with: category)
+        cell.configure(with: category, viewModel: viewModel)
         return cell
     }
 }

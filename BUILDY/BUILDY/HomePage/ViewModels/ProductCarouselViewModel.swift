@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ProductCarouselViewModel {
+final class ProductCarouselViewModel {
     private(set) var products: [Product] = []
 
     func fetchProducts(from allProducts: [Product]) {

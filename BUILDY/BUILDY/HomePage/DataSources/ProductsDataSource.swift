@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProductsDataSource: NSObject, UICollectionViewDataSource {
+final class ProductsDataSource: NSObject, UICollectionViewDataSource {
     private let viewModel: HomePageViewModel
     
     init(viewModel: HomePageViewModel) {

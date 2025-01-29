@@ -12,7 +12,7 @@ protocol NavigationHandler {
     func handleNavigation(for collectionView: UICollectionView, indexPath: IndexPath, navigationController: UINavigationController?)
 }
 
-class ProductNavigationHandler: NavigationHandler {
+final class ProductNavigationHandler: NavigationHandler {
     private let viewModel: HomePageViewModel
 
     init(viewModel: HomePageViewModel) {

@@ -38,7 +38,6 @@ class CategoriesCell: UICollectionViewCell {
         return animationView
     }()
 
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
@@ -85,33 +84,18 @@ class CategoriesCell: UICollectionViewCell {
         ])
     }
 
-    
-    func configure(with category: Category) {
+    func configure(with category: Category, viewModel: CategoriesViewModel) {
         categoryLabel.text = category.name
+        categoryImageView.image = nil
         
-        if let imageURL = category.imageURL, let url = URL(string: imageURL) {
-            loadingAnimationView.isHidden = false
-            loadingAnimationView.play()
-            categoryImageView.image = nil
-            
-            URLSession.shared.dataTask(with: url) { data, _, error in
-                guard let data = data, error == nil, let image = UIImage(data: data) else {
-                    DispatchQueue.main.async {
-                        self.loadingAnimationView.stop()
-                        self.loadingAnimationView.isHidden = true
-                        self.categoryImageView.image = UIImage(systemName: "photo")
-                    }
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.loadingAnimationView.stop()
-                    self.loadingAnimationView.isHidden = true
-                    self.categoryImageView.image = image
-                }
-            }.resume()
-        } else {
-            categoryImageView.image = UIImage(systemName: "photo")
-            loadingAnimationView.isHidden = true
+        loadingAnimationView.isHidden = false
+        loadingAnimationView.play()
+        
+        viewModel.fetchImage(for: category) { [weak self] image in
+            guard let self = self else { return }
+            self.loadingAnimationView.stop()
+            self.loadingAnimationView.isHidden = true
+            self.categoryImageView.image = image
         }
     }
 }

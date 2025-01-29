@@ -12,7 +12,7 @@ protocol FirebaseServiceProtocol {
     func fetchData(from path: String, completion: @escaping (Result<[String: Any], Error>) -> Void)
 }
 
-class FirebaseService: FirebaseServiceProtocol {
+final class FirebaseService: FirebaseServiceProtocol {
     private let database = Database.database().reference()
 
     func fetchData(from path: String, completion: @escaping (Result<[String: Any], Error>) -> Void) {

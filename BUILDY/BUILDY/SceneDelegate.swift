@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         homePageViewModel.fetchProducts()
         
         let categoryViewModel = CategoriesViewModel()
-        categoryViewModel.prefetchCategories()
+        categoryViewModel.fetchCategories()
         
         let productCarouselViewModel = ProductCarouselViewModel()
         productCarouselViewModel.fetchProducts(from: productCarouselViewModel.products)

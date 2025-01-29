@@ -149,7 +149,7 @@ extension CategoriesViewController: UICollectionViewDataSource, UICollectionView
         }
         
         let category = categories[indexPath.item]
-        cell.configure(with: category)
+        cell.configure(with: category, viewModel: viewModel)
         return cell
     }
     

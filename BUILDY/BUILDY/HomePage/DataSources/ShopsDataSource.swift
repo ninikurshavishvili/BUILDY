@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ShopsDataSource: NSObject, UICollectionViewDataSource {
+final class ShopsDataSource: NSObject, UICollectionViewDataSource {
     private let viewModel: ShopViewModel
     
     init(viewModel: ShopViewModel) {

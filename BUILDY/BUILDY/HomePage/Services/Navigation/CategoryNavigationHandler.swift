@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 
 
-class CategoryNavigationHandler: NavigationHandler {
+final class CategoryNavigationHandler: NavigationHandler {
     private let categoriesViewModel: CategoriesViewModel
     private let viewModel: HomePageViewModel
 
