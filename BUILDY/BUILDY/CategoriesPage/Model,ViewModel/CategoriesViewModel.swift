@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CategoriesViewModel {
+final class CategoriesViewModel {
     private let categoryService = CategoryService()
     private(set) var categories: [Category] = []
     var onCategoriesFetched: (() -> Void)?

@@ -8,7 +8,7 @@ import Foundation
 import FirebaseDatabase
 import UIKit
 
-class HomePageViewModel {
+final class HomePageViewModel {
     
     var products: [Product] {
         return ProductCache.shared.getProducts()

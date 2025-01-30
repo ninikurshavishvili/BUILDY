@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseStorage
 
-class CategoryService {
+final class CategoryService {
     private let storage = Storage.storage()
     
     func fetchCategories(completion: @escaping ([Category]) -> Void) {

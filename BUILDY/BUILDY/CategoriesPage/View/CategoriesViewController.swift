@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CategoriesViewController: UIViewController {
+final class CategoriesViewController: UIViewController {
     
     private var viewModel = CategoriesViewModel()
     private var categories: [Category] = []

@@ -9,7 +9,7 @@
 import UIKit
 import Lottie
 
-class CategoriesCell: UICollectionViewCell {
+final class CategoriesCell: UICollectionViewCell {
     
     static let identifier = "CategoriesCell"
     

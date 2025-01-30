@@ -23,48 +23,37 @@ struct CartProductCard: View {
                         Image("placeholder")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
+                            .modifier(ProductImageModifier())
                     case .success(let image):
                         image.resizable()
                             .aspectRatio(contentMode: .fill)
+                            .modifier(ProductImageModifier())
                     case .failure:
                         Image("placeholder")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
+                            .modifier(ProductImageModifier())
                     @unknown default:
                         Image("placeholder")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
+                            .modifier(ProductImageModifier())
                     }
                 }
-                .frame(width: 100, height: 100)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
 
                 HStack {
-                    Button(action: {
-                        cartManager.removeFromCart(product: product)
-                    }) {
+                    Button(action: { cartManager.removeFromCart(product: product) }) {
                         Image(systemName: "minus")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.black)
-                            .frame(width: 30, height: 30)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(6)
+                            .modifier(QuantityButtonModifier())
                     }
 
                     Text("\(quantity)")
                         .font(.system(size: 16, weight: .bold))
                         .frame(width: 30)
 
-                    Button(action: {
-                        cartManager.addToCart(product: product)
-                    }) {
+                    Button(action: { cartManager.addToCart(product: product) }) {
                         Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.black)
-                            .frame(width: 30, height: 30)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(6)
+                            .modifier(QuantityButtonModifier())
                     }
                 }
 
@@ -90,7 +79,6 @@ struct CartProductCard: View {
             Spacer()
 
             VStack {
-
                 HStack(spacing: 12) {
                     Button(action: {
                         if wishlistManager.isInWishlist(product: product) {
@@ -107,9 +95,7 @@ struct CartProductCard: View {
                             .cornerRadius(10)
                     }
 
-                    Button(action: {
-                        cartManager.removeProductCompletely(product: product)
-                    }) {
+                    Button(action: { cartManager.removeProductCompletely(product: product) }) {
                         Image(systemName: "trash")
                             .font(.system(size: 16))
                             .foregroundColor(.red)
@@ -118,13 +104,9 @@ struct CartProductCard: View {
                             .cornerRadius(10)
                     }
                 }
-
             }
         }
-        .padding()
-        .frame(height: 200)
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .modifier(CardModifier())
     }
 }
+

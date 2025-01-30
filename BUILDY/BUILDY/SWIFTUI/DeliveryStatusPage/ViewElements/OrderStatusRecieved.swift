@@ -16,7 +16,7 @@ struct OrderStatusRecieved: View {
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
-                .font(.system(size: 28))
+                .font(.system(size: 20))
                 .foregroundColor(.customOrange)
             Text(status)
                 .font(.title2)
@@ -32,7 +32,7 @@ struct OrderStatus: View {
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
-                .font(.system(size: 28))
+                .font(.system(size: 20))
                 .foregroundColor(.gray)
             Text(status)
                 .font(.title2)
