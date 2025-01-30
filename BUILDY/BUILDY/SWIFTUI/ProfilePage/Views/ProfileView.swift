@@ -51,37 +51,11 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal)
 
-                    VStack(spacing: 0) {
-                        SectionHeader(title: "Account Settings")
-
-                        Group {
-                            SettingsRow(title: "My Account", systemImage: "person")
-                            Divider()
-                            SettingsRow(title: "My Orders", systemImage: "doc.plaintext")
-                            Divider()
-                            SettingsRow(title: "Preferences", systemImage: "gear")
-                            Divider()
-                            SettingsRow(title: "Permissions", systemImage: "eye")
-                            Divider()
-                            SettingsRow(title: "Support", systemImage: "questionmark.circle")
-                            Divider()
-                            SettingsRow(title: "Contact", systemImage: "phone")
-                        }
-                        .foregroundStyle(.secondary)
-                        .background(Color.white)
-                        .padding(5)
-                    }
+                    AccountSettings()
+                    
                     .padding(.horizontal)
 
-                    Button(action: signOutAction) {
-                        Text("Sign Out")
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.black)
-                            .cornerRadius(16)
-                    }
+                    SignOutButton(signOutAction: signOutAction)
                     .padding(.horizontal)
                     .padding(.top, 20)
                 }
@@ -101,38 +75,6 @@ struct ProfileView: View {
                 profileManager.loadProfileImage()
             }
         }
-    }
-}
-
-struct SectionHeader: View {
-    var title: String
-
-    var body: some View {
-        Text(title)
-            .font(.headline)
-            .fontWeight(.semibold)
-            .foregroundColor(.black)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 5)
-    }
-}
-
-struct SettingsRow: View {
-    var title: String
-    var systemImage: String
-
-    var body: some View {
-        HStack {
-            Image(systemName: systemImage)
-                .foregroundColor(.black)
-            Text(title)
-                .foregroundColor(.black)
-            Spacer()
-            Image(systemName: "chevron.forward")
-                .foregroundColor(.gray)
-        }
-        .padding()
-        .background(Color.white)
     }
 }
 
