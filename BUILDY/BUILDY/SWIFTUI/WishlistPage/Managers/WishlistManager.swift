@@ -44,7 +44,15 @@ final class WishlistManager: ObservableObject {
     }
 
     private func saveToFirestore(product: Product) {
-        guard let userID = userID else { return }
+        guard let userID = userID else {
+            print("Error: userID is nil. Cannot save product.")
+            return
+        }
+        
+        if product.codeID.isEmpty {
+            print("Error: Product codeID is empty. Cannot save to Firestore.")
+            return
+        }
 
         let productData: [String: Any] = [
             "name": product.name,
@@ -71,8 +79,16 @@ final class WishlistManager: ObservableObject {
     }
 
     private func deleteFromFirestore(product: Product) {
-        guard let userID = userID else { return }
-
+        guard let userID = userID else {
+            print("Error: userID is nil. Cannot delete product from Firestore.")
+            return
+        }
+        
+        if product.codeID.isEmpty {
+            print("Error: Product codeID is empty. Cannot delete from Firestore.")
+            return
+        }
+        
         db.collection("users")
             .document(userID)
             .collection("wishlist")

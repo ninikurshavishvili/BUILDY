@@ -17,7 +17,7 @@ final class HomePageViewModel {
 
     private let firebaseService: FirebaseServiceProtocol
     private let imageFetcher: ImageFetcherProtocol
-    private let suppliers: [String] = ["kerama-marazzi", "Nova"]
+    private let suppliers: [String] = ["KERAMA MARRAZI", "Nova", "Gorgia"]
     
     init(firebaseService: FirebaseServiceProtocol = FirebaseService(), imageFetcher: ImageFetcherProtocol = ImageFetcher()) {
         self.firebaseService = firebaseService

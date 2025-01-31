@@ -112,12 +112,12 @@ final class CartManager: ObservableObject {
                 }
 
                 guard let documents = snapshot?.documents else { return }
-                print("🔵🔵🔵🔵🔵🔵Fetched \(documents.count) products from Firestore")
+                print("Fetched \(documents.count) products from Firestore")
 
                 self.cartItems.removeAll()
                 for document in documents {
                     let data = document.data()
-                    print("🔵🔵🔵🔵🔵Fetched product data: \(data)🔵🔵🔵🔵🔵")
+                    print("Fetched product data: \(data)")
 
                     if let name = data["name"] as? String,
                        let price = data["price"] as? String,

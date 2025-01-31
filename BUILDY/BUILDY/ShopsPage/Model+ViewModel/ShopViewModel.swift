@@ -41,7 +41,7 @@ final class ShopViewModel {
                         if let url = url {
                             let supplier = Suplier(name: supplierName, imageURL: url.absoluteString)
                             self.suppliers.append(supplier)
-                            print("🌸🌸 \(supplierName) downloaded")
+                            print("\(supplierName) downloaded")
                         } else {
                             print("Failed to fetch URL for \(fileName): \(error?.localizedDescription ?? "Unknown error")")
                         }
