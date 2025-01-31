@@ -52,9 +52,8 @@ Why Use BUILDY?
 ## 🚀 Getting Started
 
 Before installing, make sure you have the following:  
-🔹 **Xcode 15+** (Required to run the project)  
-🔹 **CocoaPods** (If not installed, run `sudo gem install cocoapods`)  
-🔹 **Firebase Configuration** (Ensure Firebase setup is complete)  
+🔸 **Xcode 15+** (Required to run the project)  
+🔸 **Firebase Configuration** (Ensure Firebase setup is complete)  
 
 ### 🛠 Installation
 
@@ -105,7 +104,6 @@ Before installing, make sure you have the following:
 - [ ] **Push Notifications** – Notify users about order updates and promotions.  
 - [ ] **Improved Order Tracking** – Enhance delivery tracking with real-time map updates.  
 - [ ] **Dark Mode Support** – Provide a dark mode option for better user experience.  
-- [ ] **Admin Panel** – Allow store owners to manage their product listings.  
 
 ---
 
@@ -114,6 +112,6 @@ Before installing, make sure you have the following:
 For any questions, feedback, or contributions, feel free to reach out:  
 
 - **Developer:** Nini Kurshavishvili  
-- **Email:** [your-email@example.com](mailto:your-email@example.com)  
+- **Email:** [ninikurshavishvili606@gmail.com](ninikurshavishvili606@gmail.com)  
 - **GitHub:** [ninikurshavishvili](https://github.com/ninikurshavishvili)  
 - **Project Repository:** [BUILDY on GitHub](https://github.com/ninikurshavishvili/BUILDY)  
