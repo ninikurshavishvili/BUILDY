@@ -23,10 +23,4 @@ final class ShopDetailsNavigationHandler: ShopDetailsNavigation {
 
         viewController.navigationController?.pushViewController(hostingController, animated: true)
     }
-//    func handleNavigation(for collectionView: UICollectionView, indexPath: IndexPath, navigationController: UINavigationController?) {
-//        let selectedSupplier = ShopViewModel().suppliers[indexPath.item]
-//        let shopDetailsVC = ShopDetailsViewController()
-//        shopDetailsVC.supplier = selectedSupplier
-//        navigationController?.pushViewController(shopDetailsVC, animated: true)
-//    }
 }
